@@ -2,12 +2,22 @@ import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
 import Components from 'unplugin-vue-components/vite';
 import {AntDesignVueResolver} from 'unplugin-vue-components/resolvers';
-
+import AutoImport from "unplugin-auto-import/vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [
         vue(),
+        AutoImport({
+            imports: [
+                {
+                    axios: [
+                        // default imports
+                        ["default", "axios"], // import { default as axios } from 'axios',
+                    ],
+                },
+            ],
+        }),
         // ...
         Components({
             resolvers: [
@@ -36,17 +46,7 @@ export default defineConfig({
             less: {
                 javascriptEnabled: true,
                 modifyVars: {
-                    "ant-btn-primary": "#dd4b39",
-                    "primary-color": "#2E2973",
-                    "menu-dark-color": "#FFFFFF",
-                    "layout-header-background": "#2E2973",
-                    "link-color": "#0098D6",
-                    "heading-color": "#2E2973",
-                    "btn-primary-bg": "#2E2973",
-                    "font-family": "Gotham-Book, sans-serif",
-                    "layout-body-background": "#9D9D9C33",
-                    "layout-footer-background": "#1D1D1BCC",
-                    "text-color": "#1D1D1B",
+
                 },
             },
         },

@@ -1,7 +1,16 @@
+import {notification} from 'ant-design-vue';
+
+const openNotification = (type, message, description) => {
+    notification[type]({
+        message: message,
+        description: description
+    });
+};
+
 const parseJwt = (token) => {
-    var base64Url = token.split(".")[1];
-    var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    var jsonPayload = decodeURIComponent(
+    let base64Url = token.split(".")[1];
+    let base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    let jsonPayload = decodeURIComponent(
         atob(base64)
             .split("")
             .map(function (c) {
@@ -23,13 +32,13 @@ const compareKeys = (obj1, obj2) => {
 };
 
 const generateTxt = (file, nombreFile) => {
-    var blob = new Blob([file], {
+    let blob = new Blob([file], {
         type: "text/plain;charset=utf-8"
     });
-    var a = document.createElement("a");
+    let a = document.createElement("a");
     document.body.appendChild(a);
     a.style = "display: none";
-    var url = window.URL.createObjectURL(blob);
+    let url = window.URL.createObjectURL(blob);
     a.href = url;
     a.download = nombreFile;
     a.click();
@@ -48,4 +57,4 @@ const compare = (a, b) => {
     return 0;
 };
 
-export {parseJwt, delAccentMark, compareKeys, generateTxt, compare};
+export {parseJwt, delAccentMark, compareKeys, generateTxt, compare, openNotification};

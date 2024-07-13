@@ -24,28 +24,19 @@
                 @finishFailed="onFinishFailed"
             >
               <a-form-item
-                  name="pracId"
+                  name="usuario"
                   :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
               >
-                <a-select v-model:value="formState.pracId" placeholder="Programa acádemico">
-                  <a-select-option v-for="program in academicPrograms" :key="program.pracId" :value="program.pracId">
-                    {{ program.pracNombre }}
-                  </a-select-option>
-                </a-select>
+                <a-input v-model:value="formState.usuario" placeholder="Usuario"/>
               </a-form-item>
-
               <a-form-item
-                  name="tiusId"
+                  name="password"
                   :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
               >
-                <a-select v-model:value="formState.tiusId" placeholder="Seleccione un rol">
-                  <a-select-option v-for="userType in userTypes" :key="userType.tiusId" :value="userType.tiusId">
-                    {{ userType.tiusNombre }}
-                  </a-select-option>
-                </a-select>
+                <a-input-password v-model:value="formState.password" placeholder="Contraseña"/>
               </a-form-item>
-              <a-row v-if="formState.pracId != null && formState.tiusId != null" type="flex" justify="space-around">
-                <GoogleLogin :callback="callback"/>
+              <a-row type="flex" justify="space-around">
+                <a-button type="primary" html-type="submit">Iniciar Sesión</a-button>
               </a-row>
             </a-form>
           </a-col>
@@ -59,48 +50,30 @@ import axiosInstance from "../../plugins/axios.js";
 import {reactive, onBeforeMount, ref} from 'vue';
 import {openNotification} from "../../lib/util.js";
 import {storeApp} from "../../stores/store.js";
+import router from "../../router/index.js";
 
 const store = storeApp()
+
 const formState = reactive({
-  pracId: null,
-  tiusId: null,
+  usuario: null,
+  password: null,
 });
 
-const academicPrograms = ref([]);
-const userTypes = ref([]);
-onBeforeMount(() => {
-  store.setLoader(true)
-  getAcademicPrograms()
-  getUserTypes()
-})
-
-const getAcademicPrograms = () => {
-  axiosInstance("/academic-program").then(res => {
-    if (res.status) {
-      academicPrograms.value = res.data
-      store.setLoader(false)
-    }
-  }).catch(err => {
-    openNotification("error", 'Atención', 'Se ha producido un error con los programas académicos.')
-  })
-};
-
-const getUserTypes = () => {
-  axiosInstance("/user-type").then(res => {
-    userTypes.value = res.data
-  }).catch(err => {
-    openNotification("error", 'Atención', 'Se ha producido un error con los programas académicos.')
-  })
-};
-
-const callback = (response) => {
-  // This callback will be triggered when the user selects or login to
-  // his Google account from the popup
-  console.log("Handle the response", response)
-}
 
 const onFinish = values => {
-  console.log('Success:', values);
+  console.log("???? ", values)
+  store.setLoader(true)
+
+  axiosInstance.post("/login-admin", values).then(res => {
+    if (res.status == 200) {
+      let token = res.data.token
+      store.setAdmin(true)
+      store.login(token, {"usuaNombre": 'ADMIN'})
+      router.push("/")
+    }
+  }).catch(err => {
+    console.log(" ----?? ")
+  })
 };
 const onFinishFailed = errorInfo => {
   console.log('Failed:', errorInfo);
