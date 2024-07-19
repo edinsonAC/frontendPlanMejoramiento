@@ -9,18 +9,11 @@
           @finishFailed="onFinishFailed"
       >
         <a-form-item
-            label="Código"
-            name="pracCodigo"
-            :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
-        >
-          <a-input v-model:value="formState.pracCodigo" placeholder="Código"/>
-        </a-form-item>
-        <a-form-item
             label="Nombre"
-            name="pracNombre"
+            name="tisiNombre"
             :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
         >
-          <a-input v-model:value="formState.pracNombre" placeholder="Nombre programa academico"/>
+          <a-input v-model:value="formState.tisiNombre" placeholder="Nombre tipo situación"/>
         </a-form-item>
         <a-row type="flex" justify="space-around">
           <a-button type="primary" html-type="submit"> {{ update ? 'Guardar' : 'Registrar' }}</a-button>
@@ -42,22 +35,20 @@ const props = defineProps({
 })
 
 const store = storeApp()
+
+const formState = reactive({
+  tisiNombre: null,
+});
+
 watch(props.item, async (newItem, oldItem) => {
   if (newItem) {
-    formState.pracNombre = newItem.pracNombre
-    formState.pracCodigo = newItem.pracCodigo
+    formState.tisiNombre = newItem.tisiNombre
   }
 })
 
-const formState = reactive({
-  pracNombre: null,
-  pracCodigo: null,
-});
-
 onBeforeMount(() => {
   if (props.update) {
-    formState.pracNombre = props.item['pracNombre']
-    formState.pracCodigo = props.item['pracCodigo']
+    formState.tisiNombre = props.item['tisiNombre']
   }
 })
 
@@ -65,28 +56,26 @@ onBeforeMount(() => {
 const onFinish = values => {
   store.setLoader(true)
   if (props.update) {
-    updateProgramAcademic(values)
+    updateSituationType(values)
   } else {
-    registerProgramAcademic(values)
+    registerSituationType(values)
   }
 }
 
-const registerProgramAcademic = (values) => {
-  axiosInstance.post('/academic-program', values).then(res => {
+const registerSituationType = (values) => {
+  axiosInstance.post('/situation-type', values).then(res => {
     if (res.status == 200 || res.status == 201) {
-      formState.pracNombre = null
-      formState.pracCodigo = null
+      formState.tisiNombre = null
       emit('saveInfo')
       store.setLoader(false)
     }
   })
 }
 
-const updateProgramAcademic = (values) => {
-  axiosInstance.put(`/academic-program/${props.item.pracId}`, values).then(res => {
+const updateSituationType = (values) => {
+  axiosInstance.put(`/situation-type/${props.item.tisiId}`, values).then(res => {
     if (res.status == 200 || res.status == 201) {
-      formState.pracNombre = null
-      formState.pracCodigo = null
+      formState.tisiNombre = null
       emit('updateInfo')
       store.setLoader(false)
     }

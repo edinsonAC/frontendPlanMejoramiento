@@ -133,12 +133,10 @@ const handleReset = clearFilters => {
 };
 
 const rowClick = (values) => {
-  console.log("row ", values)
   academicProgram.pracCodigo = values.pracCodigo
   academicProgram.pracNombre = values.pracNombre
   academicProgram.pracId = values.pracId
   open.value = true
-
 }
 
 const closeModal = () => {

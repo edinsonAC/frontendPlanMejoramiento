@@ -9,22 +9,33 @@
           @finishFailed="onFinishFailed"
       >
         <a-form-item
-            label="Tipo Factor"
-            name="tifaId"
+            label="Eje Estratégico"
+            name="ejesId"
             :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
         >
-          <a-select v-model:value="formState.tifaId" placeholder="Seleccione tipo factor">
-            <a-select-option v-for="factorType in factorTypes" :key="factorType.tifaId" :value="factorType.tifaId">
-              {{ factorType.tifaNombre }}
+          <a-select v-model:value="formState.ejesId" placeholder="Seleccione eje estratégico">
+            <a-select-option v-for="eje in ejes" :key="eje.ejesId" :value="eje.ejesId">
+              {{ eje.ejesNombre }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item
+            label="Línea Estratégica"
+            name="liesId"
+            :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
+        >
+          <a-select v-model:value="formState.liesId" placeholder="Seleccione línea estratégica">
+            <a-select-option v-for="linea in lineas" :key="linea.liesId" :value="linea.liesId">
+              {{ linea.ejesNombre }}
             </a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item
             label="Nombre"
-            name="factNombre"
+            name="prinNombre"
             :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
         >
-          <a-input v-model:value="formState.factNombre" placeholder="Nombre programa academico"/>
+          <a-input v-model:value="formState.prinNombre" placeholder="Nombre programa inversión"/>
         </a-form-item>
         <a-row type="flex" justify="space-around">
           <a-button type="primary" html-type="submit">{{ update ? 'Guardar' : 'Registrar' }}</a-button>
@@ -33,57 +44,52 @@
     </a-col>
   </a-row>
 </template>
-
 <script setup>
-import {onBeforeMount, reactive, watch} from "vue";
+import {onBeforeMount, reactive} from "vue";
 import axiosInstance from "../../plugins/axios.js";
 import {storeApp} from "../../stores/store.js";
 import {openNotification} from "../../lib/util.js";
 
 const store = storeApp()
-
 const emit = defineEmits(['saveInfo', 'updateInfo'])
 
 const props = defineProps({
-  factorTypes: Array,
+  ejes: Array,
+  lineas: Array,
   update: Boolean,
   item: Object
 })
 
-watch(props.item, async (newItem, oldItem) => {
-  if (newItem) {
-    formState.factNombre = newItem.factNombre
-    formState.tifaId = newItem.tifaId
-  }
-})
-
 onBeforeMount(() => {
   if (props.update) {
-    formState.factNombre = props.item['factNombre']
-    formState.tifaId = props.item['tifaId']
+    formState.prinNombre = props.item['prinNombre']
+    formState.liesId = props.item['liesId']
+    formState.ejesId = props.item['ejesId']
   }
 })
 
 const formState = reactive({
-  factNombre: null,
-  tifaId: null,
+  prinNombre: null,
+  liesId: null,
+  ejesId: null
 });
 
 const onFinish = values => {
   store.setLoader(true)
   if (props.update) {
-    updateFactor(values)
+    updateInvestmentProgram(values)
   } else {
-    registerFactor(values)
+    registerInvestmentProgram(values)
   }
 }
 
 
-const registerFactor = (values) => {
-  axiosInstance.post('/factor', values).then(res => {
+const registerInvestmentProgram = (values) => {
+  axiosInstance.post('/investment-program', values).then(res => {
     if (res.status == 200 || res.status == 201) {
-      formState.factNombre = null
-      formState.tifaId = null
+      formState.prinNombre = null
+      formState.liesId = null
+      formState.ejesId = null
       emit('saveInfo')
       store.setLoader(false)
     }
@@ -92,14 +98,17 @@ const registerFactor = (values) => {
   })
 }
 
-const updateFactor = (values) => {
-  axiosInstance.put(`/factor/${props.item.factId}`, values).then(res => {
+const updateInvestmentProgram = (values) => {
+  axiosInstance.put(`/investment-program/${props.item.prinId}`, values).then(res => {
     if (res.status == 200 || res.status == 201) {
-      formState.factNombre = null
-      formState.tifaId = null
+      formState.prinNombre = null
+      formState.liesId = null
+      formState.ejesId = null
       emit('updateInfo')
       store.setLoader(false)
     }
+  }).catch(er => {
+    openNotification('error', 'Error', 'Se ha producido un error editando la información.')
   })
 }
 

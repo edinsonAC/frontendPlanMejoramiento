@@ -14,7 +14,7 @@
       <div style="padding: 8px">
         <a-input
             ref="searchInput"
-            :placeholder="`Search ${column.dataIndex}`"
+            :placeholder="`Buscar ${column.dataIndex}`"
             :value="selectedKeys[0]"
             style="width: 188px; margin-bottom: 8px; display: block"
             @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
@@ -61,26 +61,28 @@
       </span>
     </template>
   </a-table>
-  <a-modal v-model:open="open" title="Actualizar" :footer="null">
-    <FormFactor :update="true" :item="factor" :factor-types="factorTypes" @update-info="closeModal"></FormFactor>
+  <a-modal v-model:open="open" title="Actualizar" :footer="null" destroy-on-close="true">
+    <FormStrategicLine :update="true" :item="strategicLine" :ejes="ejes" @update-info="closeModal"></FormStrategicLine>
   </a-modal>
 </template>
 <script setup>
 import {reactive, ref} from 'vue';
 import {SearchOutlined} from '@ant-design/icons-vue';
-import FormFactor from "./FormFactor.vue";
+import FormStrategicLine from "./FormStrategicLine.vue";
+
 
 const emit = defineEmits(['getList'])
 
 const props = defineProps({
-  factorTypes: Array,
+  ejes: Array,
   data: Array,
   loader: Boolean
 })
-const factor = reactive({
-  pracId: '',
-  factNombre: '',
-  tifaId: '',
+const strategicLine = reactive({
+  liesId: '',
+  ejesId: '',
+  liesNombre: '',
+  liesObjetivos: '',
 });
 const open = ref(false);
 
@@ -92,10 +94,10 @@ const searchInput = ref();
 const columns = [
   {
     title: 'Nombre',
-    dataIndex: 'factNombre',
-    key: 'factNombre',
+    dataIndex: 'liesNombre',
+    key: 'liesNombre',
     customFilterDropdown: true,
-    onFilter: (value, record) => record.factNombre.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilter: (value, record) => record.liesNombre.toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => {
@@ -105,11 +107,11 @@ const columns = [
     },
   },
   {
-    title: 'Tipo Factor',
-    dataIndex: ['tipoFactor', 'tifaNombre'],
-    key: ['tipoFactor', 'tifaNombre'],
+    title: 'Eje Estratégico',
+    dataIndex: ['ejeEstrategico', 'ejesNombre'],
+    key: ['ejeEstrategico', 'ejesNombre'],
     customFilterDropdown: true,
-    onFilter: (value, record) => record.tipoFactor.tifaNombre.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilter: (value, record) => record.ejeEstrategico.ejesNombre.toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => {
@@ -137,9 +139,10 @@ const closeModal = () => {
 }
 
 const rowClick = (values) => {
-  factor.tifaId = values.tifaId
-  factor.factNombre = values.factNombre
-  factor.factId = values.factId
+  strategicLine.liesId = values.liesId
+  strategicLine.liesNombre = values.liesNombre
+  strategicLine.liesObjetivos = values.liesObjetivos
+  strategicLine.ejesId = values.ejesId
   open.value = true
 }
 </script>

@@ -12,7 +12,8 @@
         </a-row>
         <a-row style="margin-top: 5%" type="flex" justify="space-around">
           <a-col :xs="24" :sm="24" :md="22" :lg="22" :xl="22">
-            <ListFactor :data="factors" :loader="loaderTable"></ListFactor>
+            <ListFactor :data="factors" :loader="loaderTable" :factor-types="factorsType"
+                        @getList="getFactors"></ListFactor>
           </a-col>
         </a-row>
       </a-card>

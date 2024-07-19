@@ -37,9 +37,14 @@ axiosInstance.interceptors.response.use(
         let msg = response.data.message
         switch (codeStatus) {
             case 401:
+                openNotification("error", "Información", "No tienes permisos para continuar");
+                store.logout();
+                router.push('/login')
+                break
+            case 403:
                 openNotification("error", "Información", "Se ha expirado la sesion.");
                 store.logout();
-                router.push('/')
+                router.push('/login')
                 break
             case 404:
                 openNotification("error", "Información", msg);
@@ -63,9 +68,15 @@ axiosInstance.interceptors.response.use(
                 if (url != '/login' && url != '/login-admin') {
                     openNotification("error", "Información", "Se ha expirado la sesion.");
                     store.logout();
+                    router.push('/login')
                 } else {
                     openNotification("error", "Información", msg);
                 }
+                break
+            case 403:
+                openNotification("error", "Información", "Se ha expirado la sesion.");
+                store.logout();
+                router.push('/login')
                 break
             case 404:
                 openNotification("error", "Información", msg);

@@ -14,7 +14,7 @@
       <div style="padding: 8px">
         <a-input
             ref="searchInput"
-            :placeholder="`Search ${column.dataIndex}`"
+            :placeholder="`Buscar ${column.dataIndex}`"
             :value="selectedKeys[0]"
             style="width: 188px; margin-bottom: 8px; display: block"
             @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
@@ -29,10 +29,10 @@
           <template #icon>
             <SearchOutlined/>
           </template>
-          Search
+          Buscar
         </a-button>
         <a-button size="small" style="width: 90px" @click="handleReset(clearFilters)">
-          Reset
+          Limpiar
         </a-button>
       </div>
     </template>
@@ -40,7 +40,7 @@
       <search-outlined :style="{ color: filtered ? '#108ee9' : undefined }"/>
     </template>
     <template #bodyCell="{ record, text, column }">
-      <span v-if="state.searchText && state.searchedColumn === column.dataIndex" @click="rowClick(record)">
+        <span v-if="state.searchText && state.searchedColumn === column.dataIndex" @click="rowClick(record)">
         <template
             v-for="(fragment, i) in text
             .toString()
@@ -62,27 +62,27 @@
     </template>
   </a-table>
   <a-modal v-model:open="open" title="Actualizar" :footer="null">
-    <FormFactor :update="true" :item="factor" :factor-types="factorTypes" @update-info="closeModal"></FormFactor>
+    <FormSituationType :update="true" :item="situationType" @update-info="closeModal"></FormSituationType>
   </a-modal>
 </template>
 <script setup>
 import {reactive, ref} from 'vue';
 import {SearchOutlined} from '@ant-design/icons-vue';
-import FormFactor from "./FormFactor.vue";
+import FormSituationType from "./FormSituationType.vue";
+
+
 
 const emit = defineEmits(['getList'])
-
 const props = defineProps({
-  factorTypes: Array,
   data: Array,
   loader: Boolean
 })
-const factor = reactive({
-  pracId: '',
-  factNombre: '',
-  tifaId: '',
-});
+
 const open = ref(false);
+const situationType = reactive({
+  tisiId: '',
+  tisiNombre: '',
+});
 
 const state = reactive({
   searchText: '',
@@ -92,24 +92,10 @@ const searchInput = ref();
 const columns = [
   {
     title: 'Nombre',
-    dataIndex: 'factNombre',
-    key: 'factNombre',
+    dataIndex: 'tisiNombre',
+    key: 'tisiNombre',
     customFilterDropdown: true,
-    onFilter: (value, record) => record.factNombre.toString().toLowerCase().includes(value.toLowerCase()),
-    onFilterDropdownOpenChange: visible => {
-      if (visible) {
-        setTimeout(() => {
-          searchInput.value.focus();
-        }, 100);
-      }
-    },
-  },
-  {
-    title: 'Tipo Factor',
-    dataIndex: ['tipoFactor', 'tifaNombre'],
-    key: ['tipoFactor', 'tifaNombre'],
-    customFilterDropdown: true,
-    onFilter: (value, record) => record.tipoFactor.tifaNombre.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilter: (value, record) => record.tisiNombre.toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => {
@@ -131,16 +117,15 @@ const handleReset = clearFilters => {
   state.searchText = '';
 };
 
+const rowClick = (values) => {
+  situationType.tisiNombre = values.tisiNombre
+  situationType.tisiId = values.tisiId
+  open.value = true
+}
+
 const closeModal = () => {
   open.value = false
   emit('getList')
-}
-
-const rowClick = (values) => {
-  factor.tifaId = values.tifaId
-  factor.factNombre = values.factNombre
-  factor.factId = values.factId
-  open.value = true
 }
 </script>
 <style scoped>

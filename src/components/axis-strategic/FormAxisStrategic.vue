@@ -9,18 +9,11 @@
           @finishFailed="onFinishFailed"
       >
         <a-form-item
-            label="Código"
-            name="pracCodigo"
-            :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
-        >
-          <a-input v-model:value="formState.pracCodigo" placeholder="Código"/>
-        </a-form-item>
-        <a-form-item
             label="Nombre"
-            name="pracNombre"
+            name="ejesNombre"
             :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
         >
-          <a-input v-model:value="formState.pracNombre" placeholder="Nombre programa academico"/>
+          <a-input v-model:value="formState.ejesNombre" placeholder="Código"/>
         </a-form-item>
         <a-row type="flex" justify="space-around">
           <a-button type="primary" html-type="submit"> {{ update ? 'Guardar' : 'Registrar' }}</a-button>
@@ -42,22 +35,20 @@ const props = defineProps({
 })
 
 const store = storeApp()
+
+const formState = reactive({
+  ejesNombre: null,
+});
+
 watch(props.item, async (newItem, oldItem) => {
   if (newItem) {
-    formState.pracNombre = newItem.pracNombre
-    formState.pracCodigo = newItem.pracCodigo
+    formState.ejesNombre = newItem.ejesNombre
   }
 })
 
-const formState = reactive({
-  pracNombre: null,
-  pracCodigo: null,
-});
-
 onBeforeMount(() => {
   if (props.update) {
-    formState.pracNombre = props.item['pracNombre']
-    formState.pracCodigo = props.item['pracCodigo']
+    formState.ejesNombre = props.item['ejesNombre']
   }
 })
 
@@ -65,28 +56,26 @@ onBeforeMount(() => {
 const onFinish = values => {
   store.setLoader(true)
   if (props.update) {
-    updateProgramAcademic(values)
+    updateAxisStrategic(values)
   } else {
-    registerProgramAcademic(values)
+    registerAxisStrategic(values)
   }
 }
 
-const registerProgramAcademic = (values) => {
-  axiosInstance.post('/academic-program', values).then(res => {
+const registerAxisStrategic = (values) => {
+  axiosInstance.post('/strategic-axis', values).then(res => {
     if (res.status == 200 || res.status == 201) {
-      formState.pracNombre = null
-      formState.pracCodigo = null
+      formState.ejesNombre = null
       emit('saveInfo')
       store.setLoader(false)
     }
   })
 }
 
-const updateProgramAcademic = (values) => {
-  axiosInstance.put(`/academic-program/${props.item.pracId}`, values).then(res => {
+const updateAxisStrategic = (values) => {
+  axiosInstance.put(`/strategic-axis/${props.item.ejesId}`, values).then(res => {
     if (res.status == 200 || res.status == 201) {
-      formState.pracNombre = null
-      formState.pracCodigo = null
+      formState.ejesNombre = null
       emit('updateInfo')
       store.setLoader(false)
     }
