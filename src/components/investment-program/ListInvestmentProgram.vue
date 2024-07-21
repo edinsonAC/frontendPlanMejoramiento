@@ -29,10 +29,10 @@
           <template #icon>
             <SearchOutlined/>
           </template>
-          Buscar
+          Search
         </a-button>
         <a-button size="small" style="width: 90px" @click="handleReset(clearFilters)">
-          Limpiar
+          Reset
         </a-button>
       </div>
     </template>
@@ -40,7 +40,7 @@
       <search-outlined :style="{ color: filtered ? '#108ee9' : undefined }"/>
     </template>
     <template #bodyCell="{ record, text, column }">
-        <span v-if="state.searchText && state.searchedColumn === column.dataIndex" @click="rowClick(record)">
+      <span v-if="state.searchText && state.searchedColumn === column.dataIndex" @click="rowClick(record)">
         <template
             v-for="(fragment, i) in text
             .toString()
@@ -62,26 +62,29 @@
     </template>
   </a-table>
   <a-modal v-model:open="open" title="Actualizar" :footer="null" :destroy-on-close="true">
-    <FormProcess :update="true" :item="process" @update-info="closeModal"></FormProcess>
+    <FormInvestmentProgram :update="true" :item="investmentProgram" :ejes="ejes"
+                           @update-info="closeModal"></FormInvestmentProgram>
   </a-modal>
 </template>
 <script setup>
 import {reactive, ref} from 'vue';
 import {SearchOutlined} from '@ant-design/icons-vue';
-import FormProcess from "./FormProcess.vue";
+import FormInvestmentProgram from "./FormInvestmentProgram.vue";
 
 
 const emit = defineEmits(['getList'])
+
 const props = defineProps({
+  ejes: Array,
   data: Array,
   loader: Boolean
 })
-
-const open = ref(false);
-const process = reactive({
-  procId: '',
-  procNombre: '',
+const investmentProgram = reactive({
+  liesId: '',
+  ejesId: '',
+  prinNombre: '',
 });
+const open = ref(false);
 
 const state = reactive({
   searchText: '',
@@ -91,10 +94,38 @@ const searchInput = ref();
 const columns = [
   {
     title: 'Nombre',
-    dataIndex: 'procNombre',
-    key: 'procNombre',
+    dataIndex: 'prinNombre',
+    key: 'prinNombre',
     customFilterDropdown: true,
-    onFilter: (value, record) => record.procNombre.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilter: (value, record) => record.prinNombre.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  {
+    title: 'Eje Estratégico',
+    dataIndex: ['lineaEstrategica', 'ejeEstrategico', 'ejesNombre'],
+    key: ['lineaEstrategica', 'ejeEstrategico', 'ejesNombre'],
+    customFilterDropdown: true,
+    onFilter: (value, record) => record.lineaEstrategica.ejeEstrategico.ejesNombre.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  {
+    title: 'Línea Estratégica',
+    dataIndex: ['lineaEstrategica', 'liesNombre'],
+    key: ['lineaEstrategica', 'liesNombre'],
+    customFilterDropdown: true,
+    onFilter: (value, record) => record.lineaEstrategica.liesNombre.toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => {
@@ -116,15 +147,17 @@ const handleReset = clearFilters => {
   state.searchText = '';
 };
 
-const rowClick = (values) => {
-  process.procNombre = values.procNombre
-  process.procId = values.procId
-  open.value = true
-}
-
 const closeModal = () => {
   open.value = false
   emit('getList')
+}
+
+const rowClick = (values) => {
+  investmentProgram.prinId = values.prinId
+  investmentProgram.liesId = values.liesId
+  investmentProgram.prinNombre = values.prinNombre
+  investmentProgram.ejesId = values.lineaEstrategica.ejesId
+  open.value = true
 }
 </script>
 <style scoped>

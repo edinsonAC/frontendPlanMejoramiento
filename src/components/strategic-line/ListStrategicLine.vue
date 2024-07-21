@@ -61,7 +61,7 @@
       </span>
     </template>
   </a-table>
-  <a-modal v-model:open="open" title="Actualizar" :footer="null" destroy-on-close="true">
+  <a-modal v-model:open="open" title="Actualizar" :footer="null" :destroy-on-close="true">
     <FormStrategicLine :update="true" :item="strategicLine" :ejes="ejes" @update-info="closeModal"></FormStrategicLine>
   </a-modal>
 </template>

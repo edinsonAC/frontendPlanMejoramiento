@@ -84,6 +84,13 @@ const itemsAdmin = ref([
     icon: () => h(DesktopOutlined),
     label: 'PLAN DE MEJORAMIENTO',
     title: 'PLAN DE MEJORAMIENTO',
+    children: [
+      {
+        label: 'Planes de Mejoramiento',
+        key: '/plan-mejoramiento',
+        icon: () => h(DesktopOutlined),
+      },
+    ],
   },
   {
     key: '3',
@@ -94,52 +101,23 @@ const itemsAdmin = ref([
 ]);
 const items = ref([
   {
-    key: 'mail',
-    icon: () => h(MailOutlined),
-    label: 'Navigation One',
-    title: 'Navigation One',
-  },
-  {
-    key: 'app',
-    icon: () => h(AppstoreOutlined),
-    label: 'Navigation Two',
-    title: 'Navigation Two',
-  },
-  {
-    key: 'sub1',
-    icon: () => h(SettingOutlined),
-    label: 'Navigation Three - Submenu',
-    title: 'Navigation Three - Submenu',
+    key: '2',
+    icon: () => h(DesktopOutlined),
+    label: 'PLAN DE MEJORAMIENTO',
+    title: 'PLAN DE MEJORAMIENTO',
     children: [
       {
-        type: 'group',
-        label: 'Item 1',
-        children: [
-          {
-            label: 'Option 1',
-            key: 'setting:1',
-          },
-          {
-            label: 'Option 2',
-            key: 'setting:2',
-          },
-        ],
-      },
-      {
-        type: 'group',
-        label: 'Item 2',
-        children: [
-          {
-            label: 'Option 3',
-            key: 'setting:3',
-          },
-          {
-            label: 'Option 4',
-            key: 'setting:4',
-          },
-        ],
+        label: 'Planes de Mejoramiento',
+        key: '/plan-mejoramiento',
+        icon: () => h(DesktopOutlined),
       },
     ],
+  },
+  {
+    key: '3',
+    icon: () => h(TeamOutlined),
+    label: 'PROYECTOS',
+    title: 'PROYECTOS',
   },
 ]);
 

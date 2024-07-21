@@ -59,6 +59,7 @@ import axiosInstance from "../../plugins/axios.js";
 import {reactive, onBeforeMount, ref} from 'vue';
 import {openNotification} from "../../lib/util.js";
 import {storeApp} from "../../stores/store.js";
+import router from "../../router/index.js";
 
 const store = storeApp()
 const formState = reactive({
@@ -97,7 +98,31 @@ const callback = (response) => {
   // This callback will be triggered when the user selects or login to
   // his Google account from the popup
   console.log("Handle the response", response)
+  if (response) {
+    let body = {
+      token: response.credential,
+      tiusId: formState.tiusId,
+      pracId: formState.pracId,
+    }
+    login(body)
+  } else {
+    openNotification("error", 'Atención', 'Se ha producido un error.')
+  }
+
 }
+
+const login = (values) => {
+  store.setLoader(true)
+  axiosInstance.post("/login", values).then(res => {
+    if (res.status == 200) {
+      let token = res.data.token
+      let user = res.data.usuario
+      store.setAdmin(false)
+      store.login(token, user)
+      router.push("/")
+    }
+  })
+};
 
 const onFinish = values => {
   console.log('Success:', values);

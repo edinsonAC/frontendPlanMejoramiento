@@ -23,8 +23,8 @@ const items = ref([
   {
     key: 'logout',
     icon: () => h(LogoutOutlined),
-    label: 'Cerra sesión',
-    title: 'Cerra sesión',
+    label: 'Cerrar sesión',
+    title: 'Cerrar sesión',
   },
 ]);
 </script>

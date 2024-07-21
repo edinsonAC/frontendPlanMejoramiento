@@ -61,7 +61,7 @@
       </span>
     </template>
   </a-table>
-  <a-modal v-model:open="open" title="Actualizar" :footer="null">
+  <a-modal v-model:open="open" title="Actualizar" :footer="null" :destroy-on-close="true">
     <FormAxisStrategic :update="true" :item="strategicAxis" @update-info="closeModal"></FormAxisStrategic>
   </a-modal>
 </template>

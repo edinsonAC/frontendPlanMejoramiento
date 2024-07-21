@@ -3,17 +3,17 @@
     <a-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
       <a-card class="card-chart">
         <a-row type="flex" justify="start">
-          <BreadCrumbComponent :paths="['Información Predeterminada','Linea Estratégica']"></BreadCrumbComponent>
+          <BreadCrumbComponent :paths="['Información Predeterminada','Programa Inversión']"></BreadCrumbComponent>
         </a-row>
         <a-row style="margin-top: 1%" type="flex" justify="space-around">
           <a-col :xs="24" :sm="24" :md="11" :lg="11" :xl="11">
-            <FormStrategicLine :ejes="strategicAxis" @saveInfo="getStrategicLine"></FormStrategicLine>
+            <FormInvestmentProgram :ejes="strategicAxis" @saveInfo="getInvestmentProgram"></FormInvestmentProgram>
           </a-col>
         </a-row>
         <a-row style="margin-top: 5%" type="flex" justify="space-around">
           <a-col :xs="24" :sm="24" :md="22" :lg="22" :xl="22">
-            <ListStrategicLine :data="strategicLines" :loader="loaderTable" :ejes="strategicAxis"
-                               @getList="getStrategicLine"></ListStrategicLine>
+            <ListInvestmentProgram :data="investmentPrograms" :loader="loaderTable" :ejes="strategicAxis"
+                                   @getList="getInvestmentProgram"></ListInvestmentProgram>
           </a-col>
         </a-row>
       </a-card>
@@ -25,19 +25,19 @@ import axiosInstance from "../../plugins/axios.js";
 import {onBeforeMount, ref} from "vue";
 import {storeApp} from "../../stores/store.js";
 import BreadCrumbComponent from "../../components/share/BreadCrumbComponent.vue";
-import FormStrategicLine from "../../components/strategic-line/FormStrategicLine.vue";
-import ListStrategicLine from "../../components/strategic-line/ListStrategicLine.vue";
+import FormInvestmentProgram from "../../components/investment-program/FormInvestmentProgram.vue";
+import ListInvestmentProgram from "../../components/investment-program/ListInvestmentProgram.vue";
 
 const store = storeApp()
 
 onBeforeMount(() => {
   store.setLoader(true)
   getStrategicAxis()
-  getStrategicLine()
+  getInvestmentProgram()
 })
 
 const loaderTable = ref(false)
-const strategicLines = ref([])
+const investmentPrograms = ref([])
 const strategicAxis = ref([])
 
 const getStrategicAxis = () => {
@@ -48,11 +48,11 @@ const getStrategicAxis = () => {
   })
 }
 
-const getStrategicLine = () => {
+const getInvestmentProgram = () => {
   loaderTable.value = true
-  axiosInstance.get('/strategic-line').then(res => {
+  axiosInstance.get('/investment-program').then(res => {
     if (res.status == 200) {
-      strategicLines.value = res.data
+      investmentPrograms.value = res.data
       store.setLoader(false)
       loaderTable.value = false
     }

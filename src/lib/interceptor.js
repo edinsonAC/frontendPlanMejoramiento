@@ -56,12 +56,12 @@ axiosInstance.interceptors.response.use(
     },
     (error) => {
         const store = storeApp();
-        let resp = error.response;
-        let msg = resp.data.error;
-        let url = error.config.url;
-        let codeStatus = resp.status
-
         store.setLoader(false);
+        let resp = error.response;
+        let msg = resp ? resp.data.error : 'Se ha producido un error.';
+        let url = error.config ? error.config.url : '';
+        let codeStatus = resp ? resp.status : 500;
+
 
         switch (codeStatus) {
             case 401:
@@ -79,6 +79,9 @@ axiosInstance.interceptors.response.use(
                 router.push('/login')
                 break
             case 404:
+                openNotification("error", "Información", msg);
+                break
+            default:
                 openNotification("error", "Información", msg);
                 break
         }

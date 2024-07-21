@@ -8,23 +8,23 @@
           @finish="onFinish"
           @finishFailed="onFinishFailed"
       >
-        <a-form-item
-            label="Tipo Factor"
-            name="tifaId"
-            :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
+        <a-form-item v-if="store.isAdmin"
+                     label="Programa académico"
+                     name="pracId"
+                     :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
         >
-          <a-select v-model:value="formState.tifaId" placeholder="Seleccione tipo factor">
-            <a-select-option v-for="factorType in factorTypes" :key="factorType.tifaId" :value="factorType.tifaId">
-              {{ factorType.tifaNombre }}
+          <a-select v-model:value="formState.pracId" placeholder="Seleccione Programa Académico">
+            <a-select-option v-for="program in programs" :key="program.pracId" :value="program.pracId">
+              {{ program.pracNombre }}
             </a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item
             label="Nombre"
-            name="factNombre"
+            name="plmeNombre"
             :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
         >
-          <a-input v-model:value="formState.factNombre" placeholder="Nombre programa academico"/>
+          <a-input v-model:value="formState.plmeNombre" placeholder="Nombre plan mejoramiento"/>
         </a-form-item>
         <a-row type="flex" justify="space-around">
           <a-button type="primary" html-type="submit">{{ update ? 'Guardar' : 'Registrar' }}</a-button>
@@ -45,38 +45,40 @@ const store = storeApp()
 const emit = defineEmits(['saveInfo', 'updateInfo'])
 
 const props = defineProps({
-  factorTypes: Array,
+  programs: Array,
   update: Boolean,
   item: Object
 })
 
 onBeforeMount(() => {
   if (props.update) {
-    formState.factNombre = props.item['factNombre']
-    formState.tifaId = props.item['tifaId']
+    formState.plmeNombre = props.item['plmeNombre']
+    formState.pracId = store.isAdmin ? props.item['pracId'] : store.user.pracId
   }
 })
 
 const formState = reactive({
-  factNombre: null,
-  tifaId: null,
+  plmeNombre: null,
+  pracId: null,
 });
 
 const onFinish = values => {
   store.setLoader(true)
+  if (!store.isAdmin) values['pracId'] = store.user.pracId
+
   if (props.update) {
-    updateFactor(values)
+    updateInvestmentProgram(values)
   } else {
-    registerFactor(values)
+    registerInvestmentProgram(values)
   }
 }
 
 
-const registerFactor = (values) => {
-  axiosInstance.post('/factor', values).then(res => {
+const registerInvestmentProgram = (values) => {
+  axiosInstance.post('/improvement-plan', values).then(res => {
     if (res.status == 200 || res.status == 201) {
-      formState.factNombre = null
-      formState.tifaId = null
+      formState.plmeNombre = null
+      formState.pracId = null
       emit('saveInfo')
       store.setLoader(false)
     }
@@ -85,11 +87,11 @@ const registerFactor = (values) => {
   })
 }
 
-const updateFactor = (values) => {
-  axiosInstance.put(`/factor/${props.item.factId}`, values).then(res => {
+const updateInvestmentProgram = (values) => {
+  axiosInstance.put(`/improvement-plan/${props.item.pracId}`, values).then(res => {
     if (res.status == 200 || res.status == 201) {
-      formState.factNombre = null
-      formState.tifaId = null
+      formState.plmeNombre = null
+      formState.pracId = null
       emit('updateInfo')
       store.setLoader(false)
     }

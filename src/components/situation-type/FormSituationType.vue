@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import {onBeforeMount, reactive, watch} from "vue";
+import {onBeforeMount, reactive} from "vue";
 import axiosInstance from "../../plugins/axios.js";
 import {storeApp} from "../../stores/store.js";
 
@@ -33,18 +33,11 @@ const props = defineProps({
   update: Boolean,
   item: Object
 })
-
 const store = storeApp()
 
 const formState = reactive({
   tisiNombre: null,
 });
-
-watch(props.item, async (newItem, oldItem) => {
-  if (newItem) {
-    formState.tisiNombre = newItem.tisiNombre
-  }
-})
 
 onBeforeMount(() => {
   if (props.update) {

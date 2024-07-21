@@ -13,7 +13,8 @@
             name="ejesId"
             :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
         >
-          <a-select v-model:value="formState.ejesId" placeholder="Seleccione eje estratégico">
+          <a-select v-model:value="formState.ejesId" placeholder="Seleccione eje estratégico"
+                    @change="listStrategicLineByEjesId">
             <a-select-option v-for="eje in ejes" :key="eje.ejesId" :value="eje.ejesId">
               {{ eje.ejesNombre }}
             </a-select-option>
@@ -25,8 +26,8 @@
             :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
         >
           <a-select v-model:value="formState.liesId" placeholder="Seleccione línea estratégica">
-            <a-select-option v-for="linea in lineas" :key="linea.liesId" :value="linea.liesId">
-              {{ linea.ejesNombre }}
+            <a-select-option v-for="linea in strategicLines" :key="linea.liesId" :value="linea.liesId">
+              {{ linea.liesNombre }}
             </a-select-option>
           </a-select>
         </a-form-item>
@@ -45,7 +46,7 @@
   </a-row>
 </template>
 <script setup>
-import {onBeforeMount, reactive} from "vue";
+import {onBeforeMount, reactive, ref} from "vue";
 import axiosInstance from "../../plugins/axios.js";
 import {storeApp} from "../../stores/store.js";
 import {openNotification} from "../../lib/util.js";
@@ -55,7 +56,6 @@ const emit = defineEmits(['saveInfo', 'updateInfo'])
 
 const props = defineProps({
   ejes: Array,
-  lineas: Array,
   update: Boolean,
   item: Object
 })
@@ -63,11 +63,12 @@ const props = defineProps({
 onBeforeMount(() => {
   if (props.update) {
     formState.prinNombre = props.item['prinNombre']
-    formState.liesId = props.item['liesId']
     formState.ejesId = props.item['ejesId']
+    listStrategicLineByEjesId(formState.ejesId)
+    formState.liesId = props.item['liesId']
   }
 })
-
+const strategicLines = ref([]);
 const formState = reactive({
   prinNombre: null,
   liesId: null,
@@ -111,6 +112,16 @@ const updateInvestmentProgram = (values) => {
     openNotification('error', 'Error', 'Se ha producido un error editando la información.')
   })
 }
+
+const listStrategicLineByEjesId = (values) => {
+  axiosInstance(`/strategic-line/axis-strategic/${values}`).then(res => {
+    if (res.status == 200 || res.status == 201) {
+      strategicLines.value = res.data
+      store.setLoader(false)
+    }
+  })
+}
+
 
 const onFinishFailed = values => {
 

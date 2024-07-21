@@ -61,7 +61,6 @@ const formState = reactive({
 
 
 const onFinish = values => {
-  console.log("???? ", values)
   store.setLoader(true)
 
   axiosInstance.post("/login-admin", values).then(res => {
@@ -71,8 +70,6 @@ const onFinish = values => {
       store.login(token, {"usuaNombre": 'ADMIN'})
       router.push("/")
     }
-  }).catch(err => {
-    console.log(" ----?? ")
   })
 };
 const onFinishFailed = errorInfo => {

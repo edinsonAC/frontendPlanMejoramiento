@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import {onBeforeMount, reactive, watch} from "vue";
+import {onBeforeMount, reactive} from "vue";
 import axiosInstance from "../../plugins/axios.js";
 import {storeApp} from "../../stores/store.js";
 
@@ -33,25 +33,18 @@ const props = defineProps({
   update: Boolean,
   item: Object
 })
-
 const store = storeApp()
 
 const formState = reactive({
   procNombre: null,
 });
 
-watch(props.item, async (newItem, oldItem) => {
-  if (newItem) {
-    formState.procNombre = newItem.procNombre
-  }
-})
 
 onBeforeMount(() => {
   if (props.update) {
     formState.procNombre = props.item['procNombre']
   }
 })
-
 
 const onFinish = values => {
   store.setLoader(true)

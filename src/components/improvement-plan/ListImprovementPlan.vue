@@ -1,5 +1,5 @@
 <template>
-  <a-table :data-source="data" :columns="columns" size="small"
+  <a-table :data-source="data" :columns="store.isAdmin ? columnsAdmin : columns" size="small"
            :scroll="{ y: 200 }"
            :pagination="{ showSizeChanger: true }"
            :loading="loader">
@@ -29,10 +29,10 @@
           <template #icon>
             <SearchOutlined/>
           </template>
-          Buscar
+          Search
         </a-button>
         <a-button size="small" style="width: 90px" @click="handleReset(clearFilters)">
-          Limpiar
+          Reset
         </a-button>
       </div>
     </template>
@@ -40,6 +40,10 @@
       <search-outlined :style="{ color: filtered ? '#108ee9' : undefined }"/>
     </template>
     <template #bodyCell="{ record, text, column }">
+      <template v-if="column.dataIndex.includes('plmeId')">
+        <a-button v-if="text" @click="router.push(`/plan-mejoramiento/${text}/accion-mejora`)" type="primary" size="small"> Ver</a-button>
+      </template>
+      <template v-else>
         <span v-if="state.searchText && state.searchedColumn === column.dataIndex" @click="rowClick(record)">
         <template
             v-for="(fragment, i) in text
@@ -56,45 +60,51 @@
           <template v-else>{{ fragment }}</template>
         </template>
       </span>
-      <span @click="rowClick(record)" class="pointer">
+        <span v-else @click="rowClick(record)" class="pointer">
         {{ text }}
       </span>
+      </template>
     </template>
   </a-table>
   <a-modal v-model:open="open" title="Actualizar" :footer="null" :destroy-on-close="true">
-    <FormProcess :update="true" :item="process" @update-info="closeModal"></FormProcess>
+    <FormImprovementPlan :update="true" :item="investmentProgram" :programs="programs"
+                         @update-info="closeModal"></FormImprovementPlan>
   </a-modal>
 </template>
 <script setup>
 import {reactive, ref} from 'vue';
 import {SearchOutlined} from '@ant-design/icons-vue';
-import FormProcess from "./FormProcess.vue";
+import FormImprovementPlan from "./FormImprovementPlan.vue";
+import {storeApp} from "../../stores/store.js";
+import router from "../../router/index.js";
 
-
+const store = storeApp()
 const emit = defineEmits(['getList'])
+
 const props = defineProps({
+  programs: Array,
   data: Array,
   loader: Boolean
 })
-
-const open = ref(false);
-const process = reactive({
-  procId: '',
-  procNombre: '',
+const investmentProgram = reactive({
+  pracId: '',
+  plmeNombre: '',
+  plmeId: '',
 });
+const open = ref(false);
 
 const state = reactive({
   searchText: '',
   searchedColumn: '',
 });
 const searchInput = ref();
-const columns = [
+const columnsAdmin = [
   {
     title: 'Nombre',
-    dataIndex: 'procNombre',
-    key: 'procNombre',
+    dataIndex: 'plmeNombre',
+    key: 'plmeNombre',
     customFilterDropdown: true,
-    onFilter: (value, record) => record.procNombre.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilter: (value, record) => record.plmeNombre.toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => {
@@ -102,6 +112,48 @@ const columns = [
         }, 100);
       }
     },
+  },
+  {
+    title: 'Programa Académico',
+    dataIndex: ['programaAcademico', 'pracNombre'],
+    key: ['programaAcademico', 'pracNombre'],
+    customFilterDropdown: true,
+    onFilter: (value, record) => record.programaAcademico.pracNombre.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  {
+    title: '',
+    dataIndex: 'plmeId',
+    key: 'plmeId',
+    width: 100
+  },
+];
+const columns = [
+  {
+    title: 'Nombre',
+    dataIndex: 'plmeNombre',
+    key: 'plmeNombre',
+    customFilterDropdown: true,
+    onFilter: (value, record) => record.plmeNombre.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  {
+    title: '',
+    dataIndex: 'plmeId',
+    key: 'plmeId',
+    width: 100
   },
 ];
 const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -116,15 +168,16 @@ const handleReset = clearFilters => {
   state.searchText = '';
 };
 
-const rowClick = (values) => {
-  process.procNombre = values.procNombre
-  process.procId = values.procId
-  open.value = true
-}
-
 const closeModal = () => {
   open.value = false
   emit('getList')
+}
+
+const rowClick = (values) => {
+  investmentProgram.pracId = values.pracId
+  investmentProgram.plmeNombre = values.plmeNombre
+  investmentProgram.plmeId = values.plmeId
+  open.value = true
 }
 </script>
 <style scoped>
