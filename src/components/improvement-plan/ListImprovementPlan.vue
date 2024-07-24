@@ -41,7 +41,9 @@
     </template>
     <template #bodyCell="{ record, text, column }">
       <template v-if="column.dataIndex.includes('plmeId')">
-        <a-button v-if="text" @click="router.push(`/plan-mejoramiento/${text}/accion-mejora`)" type="primary" size="small"> Ver</a-button>
+        <a-button v-if="text" @click="router.push(`/plan-mejoramiento/${text}/accion-mejora`)" type="primary"
+                  size="small"> Acciones de mejora
+        </a-button>
       </template>
       <template v-else>
         <span v-if="state.searchText && state.searchedColumn === column.dataIndex" @click="rowClick(record)">
@@ -66,8 +68,8 @@
       </template>
     </template>
   </a-table>
-  <a-modal v-model:open="open" title="Actualizar" :footer="null" :destroy-on-close="true">
-    <FormImprovementPlan :update="true" :item="investmentProgram" :programs="programs"
+  <a-modal v-model:open="open" title="Actualizar" :footer="null" :destroy-on-close="true" :width="700">
+    <FormImprovementPlan :update="true" :item="improvementPlan" :programs="programs"
                          @update-info="closeModal"></FormImprovementPlan>
   </a-modal>
 </template>
@@ -86,7 +88,7 @@ const props = defineProps({
   data: Array,
   loader: Boolean
 })
-const investmentProgram = reactive({
+const improvementPlan = reactive({
   pracId: '',
   plmeNombre: '',
   plmeId: '',
@@ -131,7 +133,7 @@ const columnsAdmin = [
     title: '',
     dataIndex: 'plmeId',
     key: 'plmeId',
-    width: 100
+    width: 300
   },
 ];
 const columns = [
@@ -153,7 +155,7 @@ const columns = [
     title: '',
     dataIndex: 'plmeId',
     key: 'plmeId',
-    width: 100
+    width: 250
   },
 ];
 const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -174,9 +176,9 @@ const closeModal = () => {
 }
 
 const rowClick = (values) => {
-  investmentProgram.pracId = values.pracId
-  investmentProgram.plmeNombre = values.plmeNombre
-  investmentProgram.plmeId = values.plmeId
+  improvementPlan.pracId = values.pracId
+  improvementPlan.plmeNombre = values.plmeNombre
+  improvementPlan.plmeId = values.plmeId
   open.value = true
 }
 </script>

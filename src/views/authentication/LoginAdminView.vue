@@ -47,12 +47,16 @@
 </template>
 <script setup>
 import axiosInstance from "../../plugins/axios.js";
-import {reactive, onBeforeMount, ref} from 'vue';
+import {reactive, onBeforeMount, ref, onMounted} from 'vue';
 import {openNotification} from "../../lib/util.js";
 import {storeApp} from "../../stores/store.js";
 import router from "../../router/index.js";
 
 const store = storeApp()
+
+onMounted(() => {
+  store.setLoader(false)
+})
 
 const formState = reactive({
   usuario: null,
@@ -68,7 +72,7 @@ const onFinish = values => {
       let token = res.data.token
       store.setAdmin(true)
       store.login(token, {"usuaNombre": 'ADMIN'})
-      router.push("/")
+      router.push("/programa-academico")
     }
   })
 };

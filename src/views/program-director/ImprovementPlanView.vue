@@ -6,7 +6,7 @@
           <BreadCrumbComponent :paths="['Plan Mejoramiento','Planes de mejoramiento']"></BreadCrumbComponent>
         </a-row>
         <a-row style="margin-top: 1%" type="flex" justify="space-around">
-          <a-col :xs="24" :sm="24" :md="11" :lg="11" :xl="11">
+          <a-col :xs="24" :sm="24" :md="14" :lg="14" :xl="14">
             <FormImprovementPlan :programs="academicPrograms" @saveInfo="resetInfo"></FormImprovementPlan>
           </a-col>
         </a-row>

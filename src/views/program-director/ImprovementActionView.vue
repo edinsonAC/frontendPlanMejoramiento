@@ -2,9 +2,10 @@
   <a-row type="flex" justify="space-around">
     <a-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
       <a-card class="card-chart">
-        <a-row type="flex" justify="start">
+        <a-row type="flex" justify="space-between">
           <BreadCrumbComponent
               :paths="['Plan Mejoramiento','Planes de mejoramiento','Acción de mejora']"></BreadCrumbComponent>
+          <a-button type="primary" @click="router.back()">Volver</a-button>
         </a-row>
         <a-row type="flex" justify="center">
           <h2>{{ improvementPlan.plmeNombre }}</h2>

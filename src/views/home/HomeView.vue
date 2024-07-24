@@ -16,7 +16,7 @@ import {storeApp} from "../../stores/store.js";
 const store = storeApp()
 
 onMounted(() => {
-  store.setLoader(false)
+  /*store.setLoader(false)*/
 })
 </script>
 <style scoped>

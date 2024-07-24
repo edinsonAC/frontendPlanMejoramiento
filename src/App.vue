@@ -8,13 +8,14 @@
   >
     <a-layout style="min-height: 100vh">
       <LoadingComponent :loading="loader"></LoadingComponent>
-      <a-layout-sider v-if="logged" v-model:collapsed="collapsed" collapsible>
+      <a-layout-sider v-if="logged && ruta != undefined && !['/login'].includes(ruta.path)"
+                      v-model:collapsed="collapsed" collapsible>
         <div class="logo"/>
         <MenuComponent></MenuComponent>
       </a-layout-sider>
       <a-layout class="layout">
-        <a-layout-header style="background-color: yellow"
-                         v-if="logged && ruta != undefined && !['login'].includes(ruta.path)">
+        <a-layout-header
+            v-if="logged && ruta != undefined && !['/login'].includes(ruta.path)">
           <HeaderComponent></HeaderComponent>
         </a-layout-header>
         <a-layout-content style=" height: 100%"
@@ -43,7 +44,7 @@ import LoadingComponent from "./components/share/LoadingComponent.vue";
 import HeaderComponent from "./components/share/HeaderComponent.vue";
 import MenuComponent from "./components/share/MenuComponent.vue";
 
-const collapsed = ref(true);
+const collapsed = ref(false);
 
 const logged = computed(() => {
   const store = storeApp()
@@ -61,6 +62,14 @@ const ruta = computed(() => {
 
 </script>
 <style>
+.ant-layout-header {
+  height: auto !important;
+}
+
+.ant-layout-header > ul {
+  line-height: 46px !important;
+}
+
 
 .layout {
   min-height: 100%;

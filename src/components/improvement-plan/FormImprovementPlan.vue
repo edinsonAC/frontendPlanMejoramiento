@@ -88,7 +88,7 @@ const registerInvestmentProgram = (values) => {
 }
 
 const updateInvestmentProgram = (values) => {
-  axiosInstance.put(`/improvement-plan/${props.item.pracId}`, values).then(res => {
+  axiosInstance.put(`/improvement-plan/${props.item.plmeId}`, values).then(res => {
     if (res.status == 200 || res.status == 201) {
       formState.plmeNombre = null
       formState.pracId = null

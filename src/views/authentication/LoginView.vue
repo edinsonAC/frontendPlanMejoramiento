@@ -97,7 +97,6 @@ const getUserTypes = () => {
 const callback = (response) => {
   // This callback will be triggered when the user selects or login to
   // his Google account from the popup
-  console.log("Handle the response", response)
   if (response) {
     let body = {
       token: response.credential,
@@ -108,7 +107,6 @@ const callback = (response) => {
   } else {
     openNotification("error", 'Atención', 'Se ha producido un error.')
   }
-
 }
 
 const login = (values) => {
@@ -119,7 +117,7 @@ const login = (values) => {
       let user = res.data.usuario
       store.setAdmin(false)
       store.login(token, user)
-      router.push("/")
+      router.push("/plan-mejoramiento")
     }
   })
 };

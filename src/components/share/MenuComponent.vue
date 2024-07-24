@@ -22,11 +22,17 @@ import {
 import {computed, h, ref} from "vue";
 import {storeApp} from "../../stores/store.js";
 import router from "../../router/index.js";
+import {Avatar as AAvatar} from 'ant-design-vue';
 
-const selectedKeys = ref([])
+const selectedKeys = ref(['1'])
 const isAdmin = computed(() => {
   const store = storeApp()
   return store.isAdmin
+})
+
+const imgUser = computed(() => {
+  const store = storeApp()
+  return store.user.usuaFoto || '';
 })
 
 
@@ -100,6 +106,14 @@ const itemsAdmin = ref([
   },
 ]);
 const items = ref([
+  /*  ...(
+        imgUser.value
+            ? [{
+              key: '/',
+              icon: () => h(AAvatar, {src: imgUser.value, size: 'large'}), // Usa la variable imgUser
+            }]
+            : []
+    ),*/
   {
     key: '2',
     icon: () => h(DesktopOutlined),
@@ -123,7 +137,6 @@ const items = ref([
 
 
 const changePage = (e) => {
-  console.log("??? ", e.key)
   router.push(e.key)
 }
 
