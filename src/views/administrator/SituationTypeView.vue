@@ -6,7 +6,7 @@
           <BreadCrumbComponent :paths="['Información Predeterminada','Tipo de Situación']"></BreadCrumbComponent>
         </a-row>
         <a-row style="margin-top: 1%" type="flex" justify="space-around">
-          <a-col :xs="24" :sm="24" :md="11" :lg="11" :xl="11">
+          <a-col :xs="24" :sm="24" :md="16" :lg="16" :xl="16">
             <FormSituationType :update="false" @saveInfo="getTypesOfSituation" :item="null"></FormSituationType>
           </a-col>
         </a-row>

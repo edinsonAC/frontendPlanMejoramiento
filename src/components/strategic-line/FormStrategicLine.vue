@@ -24,7 +24,7 @@
             name="liesNombre"
             :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
         >
-          <a-input v-model:value="formState.liesNombre" placeholder="Nombre programa academico"/>
+          <a-input v-model:value="formState.liesNombre" placeholder="Nombre eje estratégico"/>
         </a-form-item>
         <a-form-item
             label="Objetivos"

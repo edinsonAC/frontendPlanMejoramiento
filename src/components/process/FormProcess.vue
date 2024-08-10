@@ -1,6 +1,6 @@
 <template>
   <a-row align="middle" justify="space-around" type="flex" class="form-comp">
-    <a-col :xs="20" :sm="20" :md="22" :lg="22" :xl="22">
+    <a-col :xs="20" :sm="20" :md="23" :lg="23" :xl="23">
       <a-form
           :model="formState"
           name="basic"

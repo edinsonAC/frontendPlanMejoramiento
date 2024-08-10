@@ -6,7 +6,7 @@
           <BreadCrumbComponent :paths="['Información Predeterminada','Eje Estrategico']"></BreadCrumbComponent>
         </a-row>
         <a-row style="margin-top: 1%" type="flex" justify="space-around">
-          <a-col :xs="24" :sm="24" :md="11" :lg="11" :xl="11">
+          <a-col :xs="24" :sm="24" :md="16" :lg="16" :xl="16">
             <FormAxisStrategic :update="false" @saveInfo="getAxisStrategies" :item="null"></FormAxisStrategic>
           </a-col>
         </a-row>

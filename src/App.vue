@@ -3,13 +3,16 @@
                      :theme="{
       token: {
         colorPrimary: '#dd4b39',
+        colorTextHeading: '#dd4b39',
       },
     }"
   >
     <a-layout style="min-height: 100vh">
       <LoadingComponent :loading="loader"></LoadingComponent>
-      <a-layout-sider v-if="logged && ruta != undefined && !['/login'].includes(ruta.path)"
-                      v-model:collapsed="collapsed" collapsible>
+      <a-layout-sider :width="300" v-if="logged && ruta != undefined && !['/login'].includes(ruta.path)"
+                      v-model:collapsed="collapsed"
+                      class="sider-platform"
+                      collapsible>
         <div class="logo"/>
         <MenuComponent></MenuComponent>
       </a-layout-sider>
@@ -62,6 +65,16 @@ const ruta = computed(() => {
 
 </script>
 <style>
+.sider-platform {
+  background-color: #ffff !important;
+}
+
+.sider-platform > aside {
+  max-width: 300px !important;
+  min-width: 300px !important;
+  width: 300px !important;
+}
+
 .ant-layout-header {
   height: auto !important;
 }

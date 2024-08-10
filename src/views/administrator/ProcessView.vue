@@ -6,7 +6,7 @@
           <BreadCrumbComponent :paths="['Información Predeterminada','Proceso']"></BreadCrumbComponent>
         </a-row>
         <a-row style="margin-top: 1%" type="flex" justify="space-around">
-          <a-col :xs="24" :sm="24" :md="11" :lg="11" :xl="11">
+          <a-col :xs="24" :sm="24" :md="15" :lg="15" :xl="15">
             <FormProcess :update="false" @saveInfo="getProcesses" :item="null"></FormProcess>
           </a-col>
         </a-row>

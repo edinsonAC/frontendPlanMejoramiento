@@ -14,7 +14,7 @@
       <div style="padding: 8px">
         <a-input
             ref="searchInput"
-            :placeholder="`Search ${column.dataIndex}`"
+            :placeholder="`Buscar ${column.title}`"
             :value="selectedKeys[0]"
             style="width: 188px; margin-bottom: 8px; display: block"
             @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
@@ -56,12 +56,12 @@
           <template v-else>{{ fragment }}</template>
         </template>
       </span>
-      <span @click="rowClick(record)" class="pointer">
+      <span v-else @click="rowClick(record)" class="pointer">
         {{ text }}
       </span>
     </template>
   </a-table>
-  <a-modal v-model:open="open" title="Actualizar" :footer="null" :destroy-on-close="true">
+  <a-modal v-model:open="open" title="Actualizar" :footer="null" :destroy-on-close="true" :width="800">
     <FormAxisStrategic :update="true" :item="strategicAxis" @update-info="closeModal"></FormAxisStrategic>
   </a-modal>
 </template>

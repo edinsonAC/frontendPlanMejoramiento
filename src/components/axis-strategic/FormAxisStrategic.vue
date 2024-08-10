@@ -1,6 +1,6 @@
 <template>
   <a-row align="middle" justify="space-around" type="flex" class="form-comp">
-    <a-col :xs="20" :sm="20" :md="22" :lg="22" :xl="22">
+    <a-col :xs="20" :sm="20" :md="23" :lg="23" :xl="23">
       <a-form
           :model="formState"
           name="basic"
@@ -13,7 +13,7 @@
             name="ejesNombre"
             :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
         >
-          <a-input v-model:value="formState.ejesNombre" placeholder="Código"/>
+          <a-input v-model:value="formState.ejesNombre" placeholder="Nombre eje"/>
         </a-form-item>
         <a-row type="flex" justify="space-around">
           <a-button type="primary" html-type="submit"> {{ update ? 'Guardar' : 'Registrar' }}</a-button>

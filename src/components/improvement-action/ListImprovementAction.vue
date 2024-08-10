@@ -3,7 +3,7 @@
     <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="data">
       <template #renderItem="{ item }">
         <a-list-item>
-          <a-descriptions title="Acción de mejora" bordered style="margin-bottom: 1%">
+          <a-descriptions title="" bordered style="margin-bottom: 1%">
             <a-descriptions-item label="Factor">{{ item.factor.factNombre }}</a-descriptions-item>
             <a-descriptions-item label="Proceso">{{ item.proceso.procNombre }}</a-descriptions-item>
             <a-descriptions-item label="Tipo Situación">{{ item.tipoSituacion.tisiNombre }}</a-descriptions-item>
@@ -34,6 +34,7 @@ import {reactive, ref, defineProps, computed} from 'vue';
 import {storeApp} from "../../stores/store.js";
 import router from "../../router/index.js";
 import {useRoute} from "vue-router";
+
 const route = useRoute()
 
 const props = defineProps({

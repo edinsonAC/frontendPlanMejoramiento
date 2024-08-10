@@ -1,6 +1,6 @@
 <template>
   <a-row align="middle" justify="space-around" type="flex" class="form-comp">
-    <a-col :xs="20" :sm="20" :md="22" :lg="22" :xl="22">
+    <a-col :xs="20" :sm="20" :md="23" :lg="23" :xl="23">
       <a-form
           :model="formState"
           name="basic"
@@ -24,7 +24,7 @@
             name="factNombre"
             :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
         >
-          <a-input v-model:value="formState.factNombre" placeholder="Nombre programa academico"/>
+          <a-input v-model:value="formState.factNombre" placeholder="Nombre Factor"/>
         </a-form-item>
         <a-row type="flex" justify="space-around">
           <a-button type="primary" html-type="submit">{{ update ? 'Guardar' : 'Registrar' }}</a-button>

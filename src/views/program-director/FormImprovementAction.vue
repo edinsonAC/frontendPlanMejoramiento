@@ -11,7 +11,7 @@
           <h2>{{ improvementPlan.plmeNombre }}</h2>
         </a-row>
         <a-row align="middle" justify="space-around" type="flex" class="form-comp">
-          <a-col :xs="20" :sm="20" :md="22" :lg="22" :xl="22">
+          <a-col :xs="20" :sm="20" :md="24" :lg="24" :xl="24">
             <a-form
                 :model="formState"
                 name="basic"
@@ -122,9 +122,22 @@
             </a-form>
           </a-col>
         </a-row>
+        <a-row v-if="acmeId != 0" type="flex" justify="space-around" style="margin-top: 5%">
+          <a-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+            <a-row justify="space-around" type="flex" class="form-comp">
+              <a-row v-if="improvementPlan" type="flex" justify="start" style="width: 100%">
+                <h2>Tareas</h2>
+              </a-row>
+              <a-col :xs="20" :sm="20" :md="24" :lg="24" :xl="24">
+                <ListTask :loader="loaderTable" :data="tasks"></ListTask>
+              </a-col>
+            </a-row>
+          </a-col>
+        </a-row>
       </a-card>
     </a-col>
   </a-row>
+
 </template>
 <script setup>
 import {computed, onBeforeMount, reactive, ref} from "vue";
@@ -134,6 +147,7 @@ import {storeApp} from "../../stores/store.js";
 import {useRoute} from "vue-router";
 import {openNotification} from "../../lib/util.js";
 import router from "../../router/index.js";
+import ListTask from "../../components/task/ListTask.vue";
 
 const route = useRoute()
 const store = storeApp()
@@ -148,6 +162,7 @@ onBeforeMount(() => {
 
   if (acmeId.value != 0) {
     getImprovementAction()
+    getTasks()
   }
 })
 
@@ -208,7 +223,7 @@ const getImprovementPlan = () => {
 
 const improvementAction = ref(null)
 const getImprovementAction = () => {
-  axiosInstance.get('/improvement-action/' + plmeId.value).then(res => {
+  axiosInstance.get('/improvement-action/' + acmeId.value).then(res => {
     if (res.status == 200) {
       improvementAction.value = res.data
       formState.tisiId = res.data.tisiId
@@ -285,6 +300,24 @@ const registerImprovementAction = (values) => {
     }
   })
 }
+
+const tasks = ref([])
+const loaderTable = ref(false)
+
+const getTasks = () => {
+  loaderTable.value = true
+  axiosInstance.get(`/task/improvement-action/${acmeId.value}`).then(res => {
+    if (res.status == 200) {
+      tasks.value = res.data
+    }
+    loaderTable.value = false
+
+  }).catch(err => {
+    loaderTable.value = false
+  })
+}
+
+
 const onFinishFailed = values => {
 }
 </script>

@@ -14,7 +14,7 @@
       <div style="padding: 8px">
         <a-input
             ref="searchInput"
-            :placeholder="`Buscar ${column.dataIndex}`"
+            :placeholder="`Buscar ${column.title}`"
             :value="selectedKeys[0]"
             style="width: 188px; margin-bottom: 8px; display: block"
             @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
@@ -29,10 +29,10 @@
           <template #icon>
             <SearchOutlined/>
           </template>
-          Search
+          Buscar
         </a-button>
         <a-button size="small" style="width: 90px" @click="handleReset(clearFilters)">
-          Reset
+          Limpiar
         </a-button>
       </div>
     </template>
@@ -56,12 +56,12 @@
           <template v-else>{{ fragment }}</template>
         </template>
       </span>
-      <span @click="rowClick(record)" class="pointer">
+      <span v-else @click="rowClick(record)" class="pointer">
         {{ text }}
       </span>
     </template>
   </a-table>
-  <a-modal v-model:open="open" title="Actualizar" :footer="null" :destroy-on-close="true">
+  <a-modal v-model:open="open" title="Actualizar" :footer="null" :destroy-on-close="true" :width="900">
     <FormStrategicLine :update="true" :item="strategicLine" :ejes="ejes" @update-info="closeModal"></FormStrategicLine>
   </a-modal>
 </template>
