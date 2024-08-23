@@ -6,13 +6,13 @@
           <BreadCrumbComponent :paths="['Información Predeterminada','Factor']"></BreadCrumbComponent>
         </a-row>
         <a-row style="margin-top: 1%" type="flex" justify="space-around">
-          <a-col :xs="24" :sm="24" :md="14" :lg="14" :xl="14">
-            <FormFactor :factor-types="factorsType" @saveInfo="getFactors"></FormFactor>
+          <a-col :xs="24" :sm="24" :md="20" :lg="20" :xl="20">
+            <FormFactor :agrements="agrements" :factor-types="factorsType" @saveInfo="getFactors"></FormFactor>
           </a-col>
         </a-row>
         <a-row style="margin-top: 5%" type="flex" justify="space-around">
           <a-col :xs="24" :sm="24" :md="22" :lg="22" :xl="22">
-            <ListFactor :data="factors" :loader="loaderTable" :factor-types="factorsType"
+            <ListFactor :data="factors" :loader="loaderTable" :agrements="agrements" :factor-types="factorsType"
                         @getList="getFactors"></ListFactor>
           </a-col>
         </a-row>
@@ -33,12 +33,22 @@ const store = storeApp()
 onBeforeMount(() => {
   store.setLoader(true)
   getFactorTypes()
+  getAgrements()
   getFactors()
 })
 
 const loaderTable = ref(false)
 const factors = ref([])
 const factorsType = ref([])
+const agrements = ref([])
+
+const getAgrements = () => {
+  axiosInstance.get('/agrement').then(res => {
+    if (res.status == 200) {
+      agrements.value = res.data
+    }
+  })
+}
 
 const getFactorTypes = () => {
   axiosInstance.get('/factor-type').then(res => {

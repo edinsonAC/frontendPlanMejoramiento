@@ -6,6 +6,7 @@
 </template>
 <script setup>
 import {
+  SlidersOutlined,
   MailOutlined,
   AppstoreOutlined,
   SettingOutlined,
@@ -22,7 +23,6 @@ import {
 import {computed, h, ref} from "vue";
 import {storeApp} from "../../stores/store.js";
 import router from "../../router/index.js";
-import {Avatar as AAvatar} from 'ant-design-vue';
 
 const selectedKeys = ref(['1'])
 const isAdmin = computed(() => {
@@ -52,6 +52,16 @@ const itemsAdmin = ref([
             icon: () => h(BookOutlined),
           },
           {
+            label: 'Plan de Desarrollo Institucional',
+            key: '/plan-desarrrollo',
+            icon: () => h(SlidersOutlined),
+          },
+          {
+            label: 'Acuerdo',
+            key: '/acuerdo',
+            icon: () => h(BlockOutlined),
+          },
+          {
             label: 'Factores',
             key: '/factor',
             icon: () => h(GatewayOutlined),
@@ -70,11 +80,6 @@ const itemsAdmin = ref([
             label: 'Programas Inversión',
             key: '/programa-inversion',
             icon: () => h(ProjectOutlined),
-          },
-          {
-            label: 'Procesos',
-            key: '/proceso',
-            icon: () => h(BlockOutlined),
           },
           {
             label: 'Tipo Situación',

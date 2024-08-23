@@ -60,10 +60,10 @@ const router = createRouter({
             beforeEnter: (to, from, next) => before(to, from, next)
         },
         {
-            path: "/proceso",
-            name: "proceso",
+            path: "/acuerdo",
+            name: "acuerdo",
             meta: {requiresAuth: true},
-            component: () => import("../views/administrator/ProcessView.vue"),
+            component: () => import("../views/administrator/AgrementView.vue"),
             beforeEnter: (to, from, next) => before(to, from, next)
         },
         {
@@ -92,6 +92,13 @@ const router = createRouter({
             name: "plan-mejoramiento-accion-mejora-id",
             meta: {requiresAuth: true},
             component: () => import("../views/program-director/FormImprovementAction.vue"),
+            beforeEnter: (to, from, next) => before(to, from, next)
+        },
+        {
+            path: "/plan-desarrrollo",
+            name: "plan-desarrollo",
+            meta: {requiresAuth: true},
+            component: () => import("../views/administrator/DevelopmentPlanView.vue"),
             beforeEnter: (to, from, next) => before(to, from, next)
         },
         /*

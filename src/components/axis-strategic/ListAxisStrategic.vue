@@ -62,7 +62,7 @@
     </template>
   </a-table>
   <a-modal v-model:open="open" title="Actualizar" :footer="null" :destroy-on-close="true" :width="800">
-    <FormAxisStrategic :update="true" :item="strategicAxis" @update-info="closeModal"></FormAxisStrategic>
+    <FormAxisStrategic :update="true" :item="strategicAxis" @update-info="closeModal" :development-plans="developmentPlans"></FormAxisStrategic>
   </a-modal>
 </template>
 <script setup>
@@ -73,14 +73,17 @@ import FormAxisStrategic from "./FormAxisStrategic.vue";
 const emit = defineEmits(['getList'])
 const props = defineProps({
   data: Array,
-  loader: Boolean
+  loader: Boolean,
+  developmentPlans: Array
+
 })
 
 
 const open = ref(false);
 const strategicAxis = reactive({
   ejesId: '',
-  ejesNombre: ''
+  ejesNombre: '',
+  pdiId: ''
 });
 
 const state = reactive({
@@ -95,6 +98,20 @@ const columns = [
     key: 'ejesNombre',
     customFilterDropdown: true,
     onFilter: (value, record) => record.ejesNombre.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  {
+    title: 'Plan de Desarrollo Institucional (PDI)',
+    dataIndex: ['planDesarrolloInstitucional', 'pdiNombre'],
+    key: ['planDesarrolloInstitucional', 'pdiNombre'],
+    customFilterDropdown: true,
+    onFilter: (value, record) => record.planDesarrolloInstitucional.pdiNombre.toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => {
@@ -119,6 +136,7 @@ const handleReset = clearFilters => {
 const rowClick = (values) => {
   strategicAxis.ejesNombre = values.ejesNombre
   strategicAxis.ejesId = values.ejesId
+  strategicAxis.pdiId = values.pdiId
   open.value = true
 }
 

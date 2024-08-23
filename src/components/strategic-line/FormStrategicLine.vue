@@ -9,12 +9,23 @@
           @finishFailed="onFinishFailed"
       >
         <a-form-item
+            label="Plan de Desarrollo Institucional"
+            name="pdiId"
+            :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
+        >
+          <a-select v-model:value="formState.pdiId" placeholder="Seleccione PDI" @change="onchangeList">
+            <a-select-option v-for="dev in developmentPlans" :key="dev.pdiId" :value="dev.pdiId">
+              {{ dev.pdiNombre }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item
             label="Eje Estratégico"
             name="ejesId"
             :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
         >
           <a-select v-model:value="formState.ejesId" placeholder="Seleccione eje estratégico">
-            <a-select-option v-for="eje in ejes" :key="eje.ejesId" :value="eje.ejesId">
+            <a-select-option v-for="eje in strategicAxis" :key="eje.ejesId" :value="eje.ejesId">
               {{ eje.ejesNombre }}
             </a-select-option>
           </a-select>
@@ -40,7 +51,7 @@
   </a-row>
 </template>
 <script setup>
-import {onBeforeMount, reactive} from "vue";
+import {onBeforeMount, reactive, ref} from "vue";
 import axiosInstance from "../../plugins/axios.js";
 import {storeApp} from "../../stores/store.js";
 import {openNotification} from "../../lib/util.js";
@@ -49,9 +60,9 @@ const store = storeApp()
 const emit = defineEmits(['saveInfo', 'updateInfo'])
 
 const props = defineProps({
-  ejes: Array,
   update: Boolean,
-  item: Object
+  item: Object,
+  developmentPlans: Array
 })
 
 onBeforeMount(() => {
@@ -59,13 +70,16 @@ onBeforeMount(() => {
     formState.liesNombre = props.item['liesNombre']
     formState.liesObjetivos = props.item['liesObjetivos']
     formState.ejesId = props.item['ejesId']
+    formState.pdiId = props.item['pdiId']
+    getStrategicAxis(formState.pdiId)
   }
 })
 
 const formState = reactive({
   liesNombre: null,
   liesObjetivos: null,
-  ejesId: null
+  ejesId: null,
+  pdiId: null,
 });
 
 const onFinish = values => {
@@ -76,6 +90,20 @@ const onFinish = values => {
     registerStrategicLine(values)
   }
 }
+const strategicAxis = ref([])
+
+const onchangeList = (id) => {
+  formState.ejesId = null
+  getStrategicAxis(id)
+}
+
+const getStrategicAxis = (id) => {
+  axiosInstance.get('/strategic-axis/development-plan/' + id).then(res => {
+    if (res.status == 200) {
+      strategicAxis.value = res.data
+    }
+  })
+}
 
 
 const registerStrategicLine = (values) => {
@@ -84,6 +112,7 @@ const registerStrategicLine = (values) => {
       formState.liesNombre = null
       formState.liesObjetivos = null
       formState.ejesId = null
+      formState.pdiId = null
 
       emit('saveInfo')
       store.setLoader(false)
@@ -99,6 +128,8 @@ const updateStrategicLine = (values) => {
       formState.liesNombre = null
       formState.ejesId = null
       formState.liesObjetivos = null
+      formState.pdiId = null
+
       emit('updateInfo')
       store.setLoader(false)
     }

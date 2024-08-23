@@ -7,10 +7,11 @@
         </a-row>
         <a-row style="margin-top: 1%" type="flex" justify="space-around">
           <a-col :xs="24" :sm="24" :md="20" :lg="20" :xl="20">
-            <FormStrategicLine :ejes="strategicAxis" @saveInfo="getStrategicLine"></FormStrategicLine>
+            <FormStrategicLine @saveInfo="getStrategicLine"
+                               :development-plans="developmentPlans"></FormStrategicLine>
           </a-col>
         </a-row>
-        <a-row style="margin-top: 3%" type="flex" justify="space-around">
+        <a-row style="margin-top: 3%" type="flex" justify="space-around" v-show="false">
           <a-card size="small" title="Filtros" style="width: 100%">
             <a-row type="flex" justify="start">
               <a-col :xs="24" :sm="24" :md="10" :lg="12" :xl="12">
@@ -27,7 +28,8 @@
         </a-row>
         <a-row style="margin-top: 3%" type="flex" justify="space-around">
           <a-col :xs="24" :sm="24" :md="22" :lg="22" :xl="22">
-            <ListStrategicLine :data="strategicLinesFiltered" :loader="loaderTable" :ejes="strategicAxis"
+            <ListStrategicLine :data="strategicLinesFiltered" :loader="loaderTable"
+                               :development-plans="developmentPlans"
                                @getList="getStrategicLine"></ListStrategicLine>
           </a-col>
         </a-row>
@@ -47,13 +49,12 @@ const store = storeApp()
 
 onBeforeMount(() => {
   store.setLoader(true)
-  getStrategicAxis()
   getStrategicLine()
+  getDevelopmentPlans()
 })
 
 const loaderTable = ref(false)
 const strategicLines = ref([])
-const strategicAxis = ref([])
 const searchEje = ref(undefined)
 
 const strategicLinesFiltered = computed(() => {
@@ -66,14 +67,17 @@ const strategicLinesFiltered = computed(() => {
   })
 })
 
-
-const getStrategicAxis = () => {
-  axiosInstance.get('/strategic-axis').then(res => {
+const developmentPlans = ref([])
+const getDevelopmentPlans = () => {
+  axiosInstance.get('/development-plan').then(res => {
     if (res.status == 200) {
-      strategicAxis.value = res.data
+      developmentPlans.value = res.data
     }
   })
 }
+
+
+const strategicAxis = ref([])
 
 const getStrategicLine = () => {
   loaderTable.value = true

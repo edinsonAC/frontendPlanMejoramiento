@@ -9,40 +9,25 @@
           @finishFailed="onFinishFailed"
       >
         <a-form-item
-            label="Tipo Factor"
-            name="tifaId"
-            :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
-        >
-          <a-select v-model:value="formState.tifaId" placeholder="Seleccione tipo factor">
-            <a-select-option v-for="factorType in factorTypes" :key="factorType.tifaId" :value="factorType.tifaId">
-              {{ factorType.tifaNombre }}
-            </a-select-option>
-          </a-select>
-        </a-form-item>
-        <a-form-item
-            label="Acuerdo"
-            name="acueId"
-            :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
-        >
-          <a-select v-model:value="formState.acueId" placeholder="Seleccione el acuerdo al que pertenece">
-            <a-select-option v-for="agre in agrements" :key="agre.acueId" :value="agre.acueId">
-              {{ agre.acueNombre }}
-            </a-select-option>
-          </a-select>
-        </a-form-item>
-        <a-form-item
             label="Nombre"
-            name="factNombre"
+            name="pdiNombre"
             :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
         >
-          <a-input v-model:value="formState.factNombre" placeholder="Nombre Factor"/>
+          <a-input v-model:value="formState.pdiNombre" placeholder="Nombre plan"/>
+        </a-form-item>
+        <a-form-item
+            label="Periodo"
+            name="pdiPeriodo"
+            :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
+        >
+          <a-input v-model:value="formState.pdiPeriodo" placeholder="Periodo plan"/>
         </a-form-item>
         <a-form-item
             label="Descripción"
-            name="factDescripcion"
+            name="pdiDescripcion"
             :rules="[{ required: false, message: 'Este campo es obligatorio' }]"
         >
-          <a-textarea v-model:value="formState.factDescripcion" placeholder="Descripción"/>
+          <a-textarea v-model:value="formState.pdiDescripcion" placeholder="Descripción"/>
         </a-form-item>
         <a-row type="flex" justify="space-around">
           <a-button type="primary" html-type="submit">{{ update ? 'Guardar' : 'Registrar' }}</a-button>
@@ -63,45 +48,40 @@ const store = storeApp()
 const emit = defineEmits(['saveInfo', 'updateInfo'])
 
 const props = defineProps({
-  agrements: Array,
-  factorTypes: Array,
   update: Boolean,
   item: Object
 })
 
 onBeforeMount(() => {
   if (props.update) {
-    formState.factNombre = props.item['factNombre']
-    formState.factDescripcion = props.item['factDescripcion']
-    formState.tifaId = props.item['tifaId']
-    formState.acueId = props.item['acueId']
+    formState.pdiNombre = props.item['pdiNombre']
+    formState.pdiDescripcion = props.item['pdiDescripcion']
+    formState.pdiPeriodo = props.item['pdiPeriodo']
   }
 })
 
 const formState = reactive({
-  acueId: null,
-  factDescripcion: null,
-  factNombre: null,
-  tifaId: null,
+  pdiDescripcion: null,
+  pdiNombre: null,
+  pdiPeriodo: null,
 });
 
 const onFinish = values => {
   store.setLoader(true)
   if (props.update) {
-    updateFactor(values)
+    updateDevelopmentPlan(values)
   } else {
-    registerFactor(values)
+    registerDevelopmentPlan(values)
   }
 }
 
 
-const registerFactor = (values) => {
-  axiosInstance.post('/factor', values).then(res => {
+const registerDevelopmentPlan = (values) => {
+  axiosInstance.post('/development-plan', values).then(res => {
     if (res.status == 200 || res.status == 201) {
-      formState.factNombre = null
-      formState.acueId = null
-      formState.factDescripción = null
-      formState.tifaId = null
+      formState.pdiNombre = null
+      formState.pdiDescripcion = null
+      formState.pdiPeriodo = null
       emit('saveInfo')
       store.setLoader(false)
     }
@@ -110,13 +90,12 @@ const registerFactor = (values) => {
   })
 }
 
-const updateFactor = (values) => {
-  axiosInstance.put(`/factor/${props.item.factId}`, values).then(res => {
+const updateDevelopmentPlan = (values) => {
+  axiosInstance.put(`/development-plan/${props.item.pdiId}`, values).then(res => {
     if (res.status == 200 || res.status == 201) {
-      formState.factNombre = null
-      formState.factDescripción = null
-      formState.tifaId = null
-      formState.acueId = null
+      formState.pdiNombre = null
+      formState.pdiDescripcion = null
+      formState.pdiPeriodo = null
       emit('updateInfo')
       store.setLoader(false)
     }

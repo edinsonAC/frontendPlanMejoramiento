@@ -62,7 +62,8 @@
     </template>
   </a-table>
   <a-modal v-model:open="open" title="Actualizar" :footer="null" :width="800" :destroy-on-close="true">
-    <FormFactor :update="true" :item="factor" :factor-types="factorTypes" @update-info="closeModal"></FormFactor>
+    <FormFactor :update="true" :item="factor" :agrements="agrements" :factor-types="factorTypes"
+                @update-info="closeModal"></FormFactor>
   </a-modal>
 </template>
 <script setup>
@@ -74,12 +75,15 @@ const emit = defineEmits(['getList'])
 
 const props = defineProps({
   factorTypes: Array,
+  agrements: Array,
   data: Array,
   loader: Boolean
 })
 const factor = reactive({
   pracId: '',
   factNombre: '',
+  factDescripcion: '',
+  acueId: '',
   tifaId: '',
 });
 const open = ref(false);
@@ -118,6 +122,20 @@ const columns = [
       }
     },
   },
+  {
+    title: 'Acuerdo',
+    dataIndex: ['acuerdo', 'acueNombre'],
+    key: ['acuerdo', 'acueNombre'],
+    customFilterDropdown: true,
+    onFilter: (value, record) => record.acuerdo.acueNombre.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
 ];
 const handleSearch = (selectedKeys, confirm, dataIndex) => {
   confirm();
@@ -138,7 +156,9 @@ const closeModal = () => {
 
 const rowClick = (values) => {
   factor.tifaId = values.tifaId
+  factor.acueId = values.acueId
   factor.factNombre = values.factNombre
+  factor.factDescripcion = values.factDescripcion
   factor.factId = values.factId
   open.value = true
 }

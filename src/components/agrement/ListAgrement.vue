@@ -40,7 +40,7 @@
       <search-outlined :style="{ color: filtered ? '#108ee9' : undefined }"/>
     </template>
     <template #bodyCell="{ record, text, column }">
-      <span v-if="state.searchText && state.searchedColumn === column.dataIndex" @click="rowClick(record)">
+        <span v-if="state.searchText && state.searchedColumn === column.dataIndex" @click="rowClick(record)">
         <template
             v-for="(fragment, i) in text
             .toString()
@@ -61,30 +61,28 @@
       </span>
     </template>
   </a-table>
-  <a-modal v-model:open="open" title="Actualizar" :footer="null" :destroy-on-close="true" :width="900">
-    <FormStrategicLine :update="true" :item="strategicLine" :development-plans="developmentPlans" @update-info="closeModal"></FormStrategicLine>
+  <a-modal v-model:open="open" title="Actualizar" :footer="null" :destroy-on-close="true" :width="800">
+    <FormAgrement :update="true" :item="agrement" @update-info="closeModal"></FormAgrement>
   </a-modal>
 </template>
 <script setup>
 import {reactive, ref} from 'vue';
 import {SearchOutlined} from '@ant-design/icons-vue';
-import FormStrategicLine from "./FormStrategicLine.vue";
+import FormAgrement from "./FormAgrement.vue";
 
 
 const emit = defineEmits(['getList'])
-
 const props = defineProps({
-  developmentPlans: Array,
   data: Array,
   loader: Boolean
 })
-const strategicLine = reactive({
-  liesId: '',
-  ejesId: '',
-  liesNombre: '',
-  liesObjetivos: '',
-});
+
 const open = ref(false);
+const agrement = reactive({
+  acueId: '',
+  acueNombre: '',
+  acueDescripcion: '',
+});
 
 const state = reactive({
   searchText: '',
@@ -94,10 +92,10 @@ const searchInput = ref();
 const columns = [
   {
     title: 'Nombre',
-    dataIndex: 'liesNombre',
-    key: 'liesNombre',
+    dataIndex: 'acueNombre',
+    key: 'acueNombre',
     customFilterDropdown: true,
-    onFilter: (value, record) => record.liesNombre.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilter: (value, record) => record.acueNombre.toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => {
@@ -107,25 +105,11 @@ const columns = [
     },
   },
   {
-    title: 'Eje Estratégico',
-    dataIndex: ['ejeEstrategico', 'ejesNombre'],
-    key: ['ejeEstrategico', 'ejesNombre'],
+    title: 'Descripción',
+    dataIndex: 'acueDescripcion',
+    key: 'acueDescripcion',
     customFilterDropdown: true,
-    onFilter: (value, record) => record.ejeEstrategico.ejesNombre.toString().toLowerCase().includes(value.toLowerCase()),
-    onFilterDropdownOpenChange: visible => {
-      if (visible) {
-        setTimeout(() => {
-          searchInput.value.focus();
-        }, 100);
-      }
-    },
-  },
-  {
-    title: 'Plan de Desarrollo Institucional (PDI)',
-    dataIndex: ['ejeEstrategico', 'planDesarrolloInstitucional', 'pdiNombre'],
-    key: ['ejeEstrategico', 'planDesarrolloInstitucional', 'pdiNombre'],
-    customFilterDropdown: true,
-    onFilter: (value, record) => record.ejeEstrategico.planDesarrolloInstitucional.pdiNombre.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilter: (value, record) => record.acueDescripcion.toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => {
@@ -147,18 +131,16 @@ const handleReset = clearFilters => {
   state.searchText = '';
 };
 
+const rowClick = (values) => {
+  agrement.acueNombre = values.acueNombre
+  agrement.acueDescripcion = values.acueDescripcion
+  agrement.acueId = values.acueId
+  open.value = true
+}
+
 const closeModal = () => {
   open.value = false
   emit('getList')
-}
-
-const rowClick = (values) => {
-  strategicLine.liesId = values.liesId
-  strategicLine.liesNombre = values.liesNombre
-  strategicLine.liesObjetivos = values.liesObjetivos
-  strategicLine.ejesId = values.ejesId
-  strategicLine.pdiId = values.ejeEstrategico.planDesarrolloInstitucional.pdiId
-  open.value = true
 }
 </script>
 <style scoped>

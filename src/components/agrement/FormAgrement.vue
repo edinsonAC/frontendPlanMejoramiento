@@ -10,10 +10,17 @@
       >
         <a-form-item
             label="Nombre"
-            name="procNombre"
+            name="acueNombre"
             :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
         >
-          <a-input v-model:value="formState.procNombre" placeholder="Nombre proceso"/>
+          <a-input v-model:value="formState.acueNombre" placeholder="Nombre acuerdo"/>
+        </a-form-item>
+        <a-form-item
+            label="Descripción"
+            name="acueDescripcion"
+            :rules="[{ required: false, message: 'Este campo es obligatorio' }]"
+        >
+          <a-input v-model:value="formState.acueDescripcion" placeholder="Descripción"/>
         </a-form-item>
         <a-row type="flex" justify="space-around">
           <a-button type="primary" html-type="submit"> {{ update ? 'Guardar' : 'Registrar' }}</a-button>
@@ -36,39 +43,43 @@ const props = defineProps({
 const store = storeApp()
 
 const formState = reactive({
-  procNombre: null,
+  acueNombre: null,
+  acueDescripcion: null
 });
 
 
 onBeforeMount(() => {
   if (props.update) {
-    formState.procNombre = props.item['procNombre']
+    formState.acueNombre = props.item['acueNombre']
+    formState.acueDescripcion = props.item['acueDescripcion']
   }
 })
 
 const onFinish = values => {
   store.setLoader(true)
   if (props.update) {
-    updateProcess(values)
+    updateAgrement(values)
   } else {
-    registerProcess(values)
+    registerAgrement(values)
   }
 }
 
-const registerProcess = (values) => {
-  axiosInstance.post('/process', values).then(res => {
+const registerAgrement = (values) => {
+  axiosInstance.post('/agrement', values).then(res => {
     if (res.status == 200 || res.status == 201) {
-      formState.procNombre = null
+      formState.acueNombre = null
+      formState.acueDescripcion = null
       emit('saveInfo')
       store.setLoader(false)
     }
   })
 }
 
-const updateProcess = (values) => {
-  axiosInstance.put(`/process/${props.item.procId}`, values).then(res => {
+const updateAgrement = (values) => {
+  axiosInstance.put(`/agrement/${props.item.acueId}`, values).then(res => {
     if (res.status == 200 || res.status == 201) {
-      formState.procNombre = null
+      formState.acueNombre = null
+      formState.acueDescripcion = null
       emit('updateInfo')
       store.setLoader(false)
     }

@@ -40,7 +40,7 @@
       <search-outlined :style="{ color: filtered ? '#108ee9' : undefined }"/>
     </template>
     <template #bodyCell="{ record, text, column }">
-        <span v-if="state.searchText && state.searchedColumn === column.dataIndex" @click="rowClick(record)">
+      <span v-if="state.searchText && state.searchedColumn === column.dataIndex" @click="rowClick(record)">
         <template
             v-for="(fragment, i) in text
             .toString()
@@ -61,27 +61,28 @@
       </span>
     </template>
   </a-table>
-  <a-modal v-model:open="open" title="Actualizar" :footer="null" :destroy-on-close="true" :width="800">
-    <FormProcess :update="true" :item="process" @update-info="closeModal"></FormProcess>
+  <a-modal v-model:open="open" title="Actualizar" :footer="null" :width="800" :destroy-on-close="true">
+    <FormDevelopmentPlan :update="true" :item="developmentPlan" @update-info="closeModal"></FormDevelopmentPlan>
   </a-modal>
 </template>
 <script setup>
 import {reactive, ref} from 'vue';
 import {SearchOutlined} from '@ant-design/icons-vue';
-import FormProcess from "./FormProcess.vue";
-
+import FormDevelopmentPlan from "./FormDevelopmentPlan.vue";
 
 const emit = defineEmits(['getList'])
+
 const props = defineProps({
   data: Array,
   loader: Boolean
 })
-
-const open = ref(false);
-const process = reactive({
-  procId: '',
-  procNombre: '',
+const developmentPlan = reactive({
+  pracId: '',
+  pdiNombre: '',
+  pdiDescripcion: '',
+  tifaId: '',
 });
+const open = ref(false);
 
 const state = reactive({
   searchText: '',
@@ -91,10 +92,38 @@ const searchInput = ref();
 const columns = [
   {
     title: 'Nombre',
-    dataIndex: 'procNombre',
-    key: 'procNombre',
+    dataIndex: 'pdiNombre',
+    key: 'pdiNombre',
     customFilterDropdown: true,
-    onFilter: (value, record) => record.procNombre.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilter: (value, record) => record.pdiNombre.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  {
+    title: 'Periodo',
+    dataIndex: 'pdiPeriodo',
+    key: 'pdiPeriodo',
+    customFilterDropdown: true,
+    onFilter: (value, record) => record.pdiPeriodo.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  {
+    title: 'Descriccpión',
+    dataIndex: 'pdiDescripcion',
+    key: 'pdiDescripcion',
+    customFilterDropdown: true,
+    onFilter: (value, record) => record.pdiDescripcion.toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => {
@@ -116,15 +145,17 @@ const handleReset = clearFilters => {
   state.searchText = '';
 };
 
-const rowClick = (values) => {
-  process.procNombre = values.procNombre
-  process.procId = values.procId
-  open.value = true
-}
-
 const closeModal = () => {
   open.value = false
   emit('getList')
+}
+
+const rowClick = (values) => {
+  developmentPlan.pdiId = values.pdiId
+  developmentPlan.pdiNombre = values.pdiNombre
+  developmentPlan.pdiDescripcion = values.pdiDescripcion
+  developmentPlan.pdiPeriodo = values.pdiPeriodo
+  open.value = true
 }
 </script>
 <style scoped>
