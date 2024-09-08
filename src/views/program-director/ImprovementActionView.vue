@@ -4,14 +4,17 @@
       <a-card class="card-chart">
         <a-row type="flex" justify="space-between">
           <BreadCrumbComponent
-              :paths="['Plan Mejoramiento','Planes de mejoramiento','Acción de mejora']"></BreadCrumbComponent>
+              :paths="['Plan de Mejoramiento','Factor','Acciónes de mejoras']"></BreadCrumbComponent>
           <a-button type="primary" @click="router.back()">Volver</a-button>
         </a-row>
         <a-row type="flex" justify="center">
           <h2>{{ improvementPlan.plmeNombre }}</h2>
         </a-row>
-        <a-row type="flex" justify="end" style="margin-bottom: 1%">
-          <router-link :to="`/plan-mejoramiento/${plmeId}/accion-mejora/0`">
+        <a-row>
+          <progress-bar :percentaje="progressAction"></progress-bar>
+        </a-row>
+        <a-row v-if="progressAction < 100" type="flex" justify="end" style="margin-bottom: 1%">
+          <router-link :to="`/plan-mejoramiento/${plmeId}/factor/${factId}/accion-mejora/0`">
             <a-button type="primary"
                       size="small"> Crear Acción de Mejora
             </a-button>
@@ -20,26 +23,8 @@
         <a-row type="flex" justify="space-around">
           <a-card size="small" title="Filtros" style="width: 100%">
             <a-row type="flex" justify="space-around">
-              <a-col :xs="24" :sm="24" :md="5" :lg="5" :xl="5">
-                <label>Factor</label>
-                <a-select style="width:100%" v-model:value="searchFactor" placeholder="Seleccione factor"
-                          :allow-clear="true">
-                  <a-select-option v-for="fact in factors" :key="fact.factId" :value="fact.factId">
-                    {{ fact.factNombre }}
-                  </a-select-option>
-                </a-select>
-              </a-col>
-              <a-col :xs="24" :sm="24" :md="5" :lg="5" :xl="5">
-                <label>Proceso</label>
-                <a-select style="width:100%" v-model:value="searchProcess" placeholder="Seleccione proceso"
-                          :allow-clear="true">
-                  <a-select-option v-for="proceso in procesess" :key="proceso.procId" :value="proceso.procId">
-                    {{ proceso.procNombre }}
-                  </a-select-option>
-                </a-select>
-              </a-col>
-              <a-col :xs="24" :sm="24" :md="5" :lg="5" :xl="5">
-                <label>Tipo Situación</label>
+              <a-col :xs="24" :sm="24" :md="11" :lg="11" :xl="11">
+                <label>Situación Intervenir</label>
                 <a-select style="width:100%" v-model:value="searchSituation" placeholder="Seleccione situación"
                           :allow-clear="true">
                   <a-select-option v-for="situation in situationTypes" :key="situation.tisiId"
@@ -48,7 +33,7 @@
                   </a-select-option>
                 </a-select>
               </a-col>
-              <a-col :xs="24" :sm="24" :md="5" :lg="5" :xl="5">
+              <a-col :xs="24" :sm="24" :md="11" :lg="11" :xl="11">
                 <label>Programa Inversión</label>
                 <a-select style="width:100%" v-model:value="searchProgram" placeholder="Seleccione programa"
                           :allow-clear="true">
@@ -77,6 +62,7 @@ import BreadCrumbComponent from "../../components/share/BreadCrumbComponent.vue"
 import ListImprovementAction from "../../components/improvement-action/ListImprovementAction.vue";
 import {useRoute} from 'vue-router'
 import router from "../../router/index.js";
+import ProgressBar from "../../components/improvement-action/ProgressBar.vue";
 
 const route = useRoute()
 const store = storeApp()
@@ -84,48 +70,48 @@ const store = storeApp()
 onBeforeMount(() => {
   store.setLoader(true)
   getInvestmentProgram()
-  getProcesses()
   getImprovementPlan()
   getFactors()
   getSituationType()
-  getImprovementActionByPlmeId()
+  getImprovementActionByPlmeIdAndFactId()
 })
 
 const improvementActions = ref([])
-
 const plmeId = computed(() => {
   return route.params.plan
 })
 
-const searchFactor = ref(undefined)
-const searchProcess = ref(undefined)
 const searchSituation = ref(undefined)
 const searchProgram = ref(undefined)
 
 const improvementActionsFiltered = computed(() => {
-  const searchFactorLower = searchFactor.value !== undefined ? searchFactor.value.toString().toLowerCase() : ""
-  const searchProcessLower = searchProcess.value !== undefined ? searchProcess.value.toString().toLowerCase() : ""
   const searchSituationLower = searchSituation.value !== undefined ? searchSituation.value.toString().toLowerCase() : ""
   const searchProgramLower = searchProgram.value !== undefined ? searchProgram.value.toString().toLowerCase() : ""
 
   return improvementActions.value.filter((item) => {
-    const factId = item.factId?.toString().toLowerCase() || ""
-    const procId = item.procId?.toString().toLowerCase() || ""
     const tisiId = item.tisiId?.toString().toLowerCase() || ""
     const prinId = item.prinId?.toString().toLowerCase() || ""
 
     return (
-        factId.includes(searchFactorLower) &&
-        procId.includes(searchProcessLower) &&
         tisiId.includes(searchSituationLower) &&
         prinId.includes(searchProgramLower)
     )
   })
 })
 
+const progressAction = computed(() => {
+  let total = 0;
+  improvementActions.value.forEach(e => total += e.acmePeso)
+  return total
+})
 
-const getImprovementActionByPlmeId = () => {
-  axiosInstance.get('/improvement-action/improvement-plan/' + plmeId.value).then(res => {
+const factId = computed(() => {
+  return route.params.factor
+})
+
+
+const getImprovementActionByPlmeIdAndFactId = () => {
+  axiosInstance.get(`/improvement-action/improvement-plan/${plmeId.value}/factor/${factId.value}`).then(res => {
     if (res.status == 200) {
       improvementActions.value = res.data
       store.setLoader(false)
@@ -162,18 +148,9 @@ const getSituationType = () => {
 
 const investmentPrograms = ref([])
 const getInvestmentProgram = () => {
-  axiosInstance.get('/investment-program').then(res => {
+  axiosInstance.get('/investment-program/improvement-plan/' + plmeId.value).then(res => {
     if (res.status == 200) {
       investmentPrograms.value = res.data
-    }
-  })
-}
-
-const procesess = ref([])
-const getProcesses = () => {
-  axiosInstance.get('/process').then(res => {
-    if (res.status == 200) {
-      procesess.value = res.data
     }
   })
 }

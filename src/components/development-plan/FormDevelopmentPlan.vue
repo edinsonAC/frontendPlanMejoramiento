@@ -18,9 +18,11 @@
         <a-form-item
             label="Periodo"
             name="pdiPeriodo"
-            :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
+            :rules="[{ required: true, message: 'Este campo es obligatorio' },
+             { pattern: /^\d{4}-\d{4}$/, message: 'El formato debe ser 0000-0000' }
+            ]"
         >
-          <a-input v-model:value="formState.pdiPeriodo" placeholder="Periodo plan"/>
+          <a-input v-model:value="formState.pdiPeriodo" :maxlength="9" placeholder="2000-2020"/>
         </a-form-item>
         <a-form-item
             label="Descripción"

@@ -13,7 +13,7 @@
             name="tisiNombre"
             :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
         >
-          <a-input v-model:value="formState.tisiNombre" placeholder="Nombre tipo situación"/>
+          <a-input v-model:value="formState.tisiNombre" :maxlength="200" placeholder="Nombre tipo situación"/>
         </a-form-item>
         <a-row type="flex" justify="space-around">
           <a-button type="primary" html-type="submit"> {{ update ? 'Guardar' : 'Registrar' }}</a-button>

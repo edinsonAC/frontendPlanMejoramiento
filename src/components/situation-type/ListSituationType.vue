@@ -89,7 +89,7 @@ const state = reactive({
 const searchInput = ref();
 const columns = [
   {
-    title: 'Nombre',
+    title: 'Situación a intervenir',
     dataIndex: 'tisiNombre',
     key: 'tisiNombre',
     customFilterDropdown: true,

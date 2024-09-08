@@ -3,7 +3,8 @@
     <a-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
       <a-card class="card-chart">
         <a-row type="flex" justify="start">
-          <BreadCrumbComponent :paths="['Información Predeterminada','Plan de Desarrollo Institucional']"></BreadCrumbComponent>
+          <BreadCrumbComponent
+              :paths="['Información Predeterminada','Plan de Desarrollo Institucional']"></BreadCrumbComponent>
         </a-row>
         <a-row style="margin-top: 1%" type="flex" justify="space-around">
           <a-col :xs="24" :sm="24" :md="20" :lg="20" :xl="20">
@@ -12,8 +13,8 @@
         </a-row>
         <a-row style="margin-top: 5%" type="flex" justify="space-around">
           <a-col :xs="24" :sm="24" :md="22" :lg="22" :xl="22">
-            <ListDevelopmentPlan :data="developmentPlans" :loader="loaderTable" 
-                        @getList="getDevelopmentPlans"></ListDevelopmentPlan>
+            <ListDevelopmentPlan :data="developmentPlans" :loader="loaderTable"
+                                 @getList="getDevelopmentPlans"></ListDevelopmentPlan>
           </a-col>
         </a-row>
       </a-card>

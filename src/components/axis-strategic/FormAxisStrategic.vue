@@ -9,22 +9,22 @@
           @finishFailed="onFinishFailed"
       >
         <a-form-item
-            label="Nombre"
-            name="ejesNombre"
-            :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
-        >
-          <a-input v-model:value="formState.ejesNombre" placeholder="Nombre eje"/>
-        </a-form-item>
-        <a-form-item
             label="Plan de Desarrollo Institucional (PDI)"
             name="pdiId"
             :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
         >
           <a-select v-model:value="formState.pdiId" placeholder="Plan de desarrollo">
-            <a-select-option v-for="dev in developmentPlans" :value="dev.pdiId" :key="dev.pdiId">
+            <a-select-option v-for="dev in developmentPlansFiltered" :value="dev.pdiId" :key="dev.pdiId">
               {{ dev.pdiNombre }} - {{ dev.pdiPeriodo }}
             </a-select-option>
           </a-select>
+        </a-form-item>
+        <a-form-item
+            label="Nombre"
+            name="ejesNombre"
+            :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
+        >
+          <a-input v-model:value="formState.ejesNombre" :maxlength="400" placeholder="Nombre eje"/>
         </a-form-item>
         <a-row type="flex" justify="space-around">
           <a-button type="primary" html-type="submit"> {{ update ? 'Guardar' : 'Registrar' }}</a-button>
@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import {onBeforeMount, reactive} from "vue";
+import {computed, onBeforeMount, reactive} from "vue";
 import axiosInstance from "../../plugins/axios.js";
 import {storeApp} from "../../stores/store.js";
 
@@ -59,6 +59,14 @@ onBeforeMount(() => {
   }
 })
 
+const developmentPlansFiltered = computed(() => {
+  return props.developmentPlans.filter((item) => {
+    if (!props.update)
+      return item.pdiState
+    else
+      return item
+  })
+})
 
 const onFinish = values => {
   store.setLoader(true)

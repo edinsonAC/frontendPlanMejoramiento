@@ -12,8 +12,8 @@
             </h3>
           </a-col>
           <a-col :xs="20" :sm="20" :md="24" :lg="24" :xl="24"
-                 :style="{ display: 'flex', justifyContent: 'center', marginBottom: '5%' }">
-            <img src='../../assets/images/logo_ufps.png' width="300"/>
+                 :style="{ display: 'flex', justifyContent: 'center' }">
+            <img src='../../assets/images/logo.png' width="600"/>
           </a-col>
           <a-col :xs="20" :sm="20" :md="18" :lg="18" :xl="18">
             <a-form
@@ -27,13 +27,13 @@
                   name="usuario"
                   :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
               >
-                <a-input v-model:value="formState.usuario" placeholder="Usuario"/>
+                <a-input v-model:value="formState.usuario" :maxlength="80" placeholder="Usuario"/>
               </a-form-item>
               <a-form-item
                   name="password"
                   :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
               >
-                <a-input-password v-model:value="formState.password" placeholder="Contraseña"/>
+                <a-input-password v-model:value="formState.password" :maxlength="40" placeholder="Contraseña"/>
               </a-form-item>
               <a-row type="flex" justify="space-around">
                 <a-button type="primary" html-type="submit">Iniciar Sesión</a-button>

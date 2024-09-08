@@ -91,7 +91,7 @@ const state = reactive({
 const searchInput = ref();
 const columns = [
   {
-    title: 'Nombre',
+    title: 'Nombre Acuerdo',
     dataIndex: 'acueNombre',
     key: 'acueNombre',
     customFilterDropdown: true,
@@ -109,7 +109,10 @@ const columns = [
     dataIndex: 'acueDescripcion',
     key: 'acueDescripcion',
     customFilterDropdown: true,
-    onFilter: (value, record) => record.acueDescripcion.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilter: (value, record) => {
+      const val = record.acueDescripcion != null ? record.acueDescripcion.toString() : ''
+      return val.toLowerCase().includes(value.toLowerCase())
+    },
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => {

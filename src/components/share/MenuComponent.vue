@@ -7,9 +7,6 @@
 <script setup>
 import {
   SlidersOutlined,
-  MailOutlined,
-  AppstoreOutlined,
-  SettingOutlined,
   PieChartOutlined,
   BookOutlined,
   ProjectOutlined,
@@ -97,9 +94,26 @@ const itemsAdmin = ref([
     title: 'PLAN DE MEJORAMIENTO',
     children: [
       {
-        label: 'Planes de Mejoramiento',
-        key: '/plan-mejoramiento',
-        icon: () => h(DesktopOutlined),
+        label: 'Planeación',
+        type: 'group',
+        children: [
+          {
+            label: 'Planes de Mejoramiento',
+            key: '/plan-mejoramiento',
+            icon: () => h(DesktopOutlined),
+          }
+        ]
+      },
+      {
+        label: 'Ejecución',
+        type: 'group',
+        children: [
+          {
+            label: 'Tareas',
+            key: '/',
+            icon: () => h(DesktopOutlined),
+          }
+        ]
       },
     ],
   },

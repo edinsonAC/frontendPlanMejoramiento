@@ -14,7 +14,7 @@
             :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
         >
           <a-select v-model:value="formState.pdiId" placeholder="Seleccione PDI" @change="onchangeList">
-            <a-select-option v-for="dev in developmentPlans" :key="dev.pdiId" :value="dev.pdiId">
+            <a-select-option v-for="dev in developmentPlansFiltered" :key="dev.pdiId" :value="dev.pdiId">
               {{ dev.pdiNombre }}
             </a-select-option>
           </a-select>
@@ -35,13 +35,13 @@
             name="liesNombre"
             :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
         >
-          <a-input v-model:value="formState.liesNombre" placeholder="Nombre eje estratégico"/>
+          <a-input v-model:value="formState.liesNombre" :maxlength="400" placeholder="Nombre línea estratégica"/>
         </a-form-item>
         <a-form-item
             label="Objetivos"
             name="liesObjetivos"
         >
-          <a-textarea v-model:value="formState.liesObjetivos" placeholder="Objetivos"></a-textarea>
+          <a-textarea v-model:value="formState.liesObjetivos" :maxlength="1500" placeholder="Objetivos"></a-textarea>
         </a-form-item>
         <a-row type="flex" justify="space-around">
           <a-button type="primary" html-type="submit">{{ update ? 'Guardar' : 'Registrar' }}</a-button>
@@ -51,7 +51,7 @@
   </a-row>
 </template>
 <script setup>
-import {onBeforeMount, reactive, ref} from "vue";
+import {computed, onBeforeMount, reactive, ref} from "vue";
 import axiosInstance from "../../plugins/axios.js";
 import {storeApp} from "../../stores/store.js";
 import {openNotification} from "../../lib/util.js";
@@ -73,6 +73,15 @@ onBeforeMount(() => {
     formState.pdiId = props.item['pdiId']
     getStrategicAxis(formState.pdiId)
   }
+})
+
+const developmentPlansFiltered = computed(() => {
+  return props.developmentPlans.filter((item) => {
+    if (!props.update)
+      return item.pdiState
+    else
+      return item
+  })
 })
 
 const formState = reactive({

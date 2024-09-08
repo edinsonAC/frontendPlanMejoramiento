@@ -12,8 +12,8 @@
             </h3>
           </a-col>
           <a-col :xs="20" :sm="20" :md="24" :lg="24" :xl="24"
-                 :style="{ display: 'flex', justifyContent: 'center', marginBottom: '5%' }">
-            <img src='../../assets/images/logo_ufps.png' width="300"/>
+                 :style="{ display: 'flex', justifyContent: 'center' }">
+            <img src='../../assets/images/logo.png' width="600"/>
           </a-col>
           <a-col :xs="20" :sm="20" :md="18" :lg="18" :xl="18">
             <a-form

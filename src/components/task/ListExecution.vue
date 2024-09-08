@@ -1,14 +1,24 @@
 <template>
-  <a-row type="flex" justify="end" style="margin-bottom: 1%">
-    <progress-bar :percentaje="progressTasks"></progress-bar>
+  <a-row type="flex" justify="space-around" style="margin-bottom: 1%" align="bottom">
+    <a-col :xs="20" :sm="20" :md="12" :lg="12" :xl="12">
+      <label>Seleccionar tarea</label>
+      <a-select style="width: 100%" v-model:value="tareId">
+        <a-select-option v-for="task in data" :key="task.tareId" :value="task.tareId">
+          {{ task.tareNombre }}
+        </a-select-option>
+      </a-select>
+    </a-col>
+    <a-col :xs="20" :sm="20" :md="5" :lg="5" :xl="5">
+      <a-button @click="getExecutions">Aceptar</a-button>
+    </a-col>
+    <a-col :xs="20" :sm="20" :md="5" :lg="5" :xl="5">
+      <a-button type="primary" @click="showModal">Registrar Ejecución</a-button>
+    </a-col>
   </a-row>
-  <a-row v-if="progressTasks < 100" type="flex" justify="end" style="margin-bottom: 1%">
-    <a-button type="primary" size="small" @click="showModal">Registrar Tarea</a-button>
-  </a-row>
-  <a-table :data-source="data" :columns="columns" size="small"
+  <a-table :data-source="executions" :columns="columns" size="small"
            :scroll="{ y: 200 }"
            :pagination="{ showSizeChanger: true }"
-           :loading="loader">
+           :loading="loaderTable">
     <template #header>
       edinson
     </template>
@@ -70,20 +80,21 @@
       </span>
     </template>
   </a-table>
-  <a-modal v-model:open="open" title="Tarea" :footer="null" :destroy-on-close="true" :width="900">
-    <FormTask
+  <a-modal v-model:open="open" title="Ejecución" :footer="null" :destroy-on-close="true" :width="900">
+    <FormExecution
         @save-info="refresh"
-        :item="task" :update="task.tareId != null" :users="users" :responsibles="responsibles"
-        :acmeId="acmeId"></FormTask>
+        :item="task" :update="execution.ejecId != null" :users="users"
+        :tareId="tareId"></FormExecution>
   </a-modal>
 </template>
 <script setup>
 import {computed, onBeforeMount, reactive, ref} from 'vue';
 import {SearchOutlined} from '@ant-design/icons-vue';
-import FormTask from "./FormTask.vue";
 import axiosInstance from "../../plugins/axios.js";
 import ProgressBar from "../improvement-action/ProgressBar.vue";
 import {useRoute} from "vue-router";
+import {openNotification} from "../../lib/util.js";
+import FormExecution from "./FormExecution.vue";
 
 const route = useRoute()
 
@@ -96,64 +107,40 @@ const props = defineProps({
 
 onBeforeMount(() => {
   getUsers()
-  getResponsibles()
 })
 const plmeId = computed(() => {
   return route.params.plan
 })
 const open = ref(false);
-const task = reactive({
-  tareId: null,
-  tareNombre: '',
-  tareDescripcion: '',
-  tarePeso: 0,
-  tareMeta: '',
-  tareLineaBase: '',
-  tareDocumentoLineaBase: '',
-  acmeId: '',
-  tareFechaInicio: '',
-  tareFechaFin: '',
-  usuaId: '',
-  respId: '',
-  tareRecursos: '',
-  tareOrden: 0
-});
+const tareId = ref("");
+const executions = ref([]);
 
-const progressTasks = computed(() => {
-  let total = 0;
-  if (props.data) {
-    props.data.forEach(e => total += e.tarePeso)
-  }
-  return total
-})
+const execution = reactive({
+  ejecId: null,
+  ejecDescripcion: '',
+  ejecAvance: '',
+  tareId: '',
+  ejecFechaEjecucion: '',
+  usuaId: '',
+  ejecSemestre: '',
+  ejecAnio: ''
+});
 
 const state = reactive({
   searchText: '',
   searchedColumn: '',
 });
 
+const loaderTable = ref(false);
+
 const searchInput = ref();
 const columns = [
   {
-    title: 'Nombre',
-    dataIndex: 'tareNombre',
-    key: 'tareNombre',
-    customFilterDropdown: true,
-    onFilter: (value, record) => record.tareNombre.toString().toLowerCase().includes(value.toLowerCase()),
-    onFilterDropdownOpenChange: visible => {
-      if (visible) {
-        setTimeout(() => {
-          searchInput.value.focus();
-        }, 100);
-      }
-    },
-  },
-  {
     title: 'Descripción',
-    dataIndex: 'tareDescripcion',
-    key: 'tareDescripcion',
+    dataIndex: 'ejecDescripcion',
+    key: 'ejecDescripcion',
     customFilterDropdown: true,
-    onFilter: (value, record) => record.tareDescripcion.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilter: (value, record) => record.ejecDescripcion.toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => {
@@ -177,11 +164,11 @@ const columns = [
     },
   },
   {
-    title: 'Fecha Inicio',
-    dataIndex: 'tareFechaInicio',
-    key: 'tareFechaInicio',
+    title: 'Fecha',
+    dataIndex: 'ejecFechaEjecucion',
+    key: 'ejecFechaEjecucion',
     customFilterDropdown: true,
-    onFilter: (value, record) => record.tareFechaInicio.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilter: (value, record) => record.ejecFechaEjecucion.toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => {
@@ -191,11 +178,11 @@ const columns = [
     },
   },
   {
-    title: 'Fecha Fin',
-    dataIndex: 'tareFechaFin',
-    key: 'tareFechaFin',
+    title: 'Avance',
+    dataIndex: 'ejecAvance',
+    key: 'ejecAvance',
     customFilterDropdown: true,
-    onFilter: (value, record) => record.tareFechaFin.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilter: (value, record) => record.ejecAvance.toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => {
@@ -218,37 +205,26 @@ const handleReset = clearFilters => {
 };
 
 const rowClick = (values) => {
-  task.tareId = values.tareId
-  task.tareNombre = values.tareNombre
-  task.tareDescripcion = values.tareDescripcion
-  task.usuaId = values.usuaId
-  task.respId = values.respId
-  task.tarePeso = values.tarePeso
-  task.tareMeta = values.tareMeta
-  task.tareLineaBase = values.tareLineaBase
-  task.tareDocumentoLineaBase = values.tareDocumentoLineaBase
-  task.acmeId = values.acmeId
-  task.tareFechaInicio = values.tareFechaInicio
-  task.tareFechaFin = values.tareFechaFin
-  task.tareRecursos = values.tareRecursos
-  task.tareOrden = values.tareOrden
+
+  execution.ejecId = values.ejecId
+  execution.ejecDescripcion = values.ejecDescripcion
+  execution.ejecAvance = values.ejecAvance
+  execution.tareId = values.tareId
+  execution.ejecFechaEjecucion = values.ejecFechaEjecucion
+  execution.usuaId = values.usuaId
+  execution.ejecSemestre = values.ejecSemestre
+  execution.ejecAnio = values.ejecAnio
   open.value = true
 }
 const showModal = (values) => {
+  if (tareId.value == "")
+    return openNotification("warning", "Atención", "Debe seleccionar una tarea")
   open.value = true
 }
 
-const responsibles = ref([])
-const getResponsibles = () => {
-  axiosInstance('/responsible').then(res => {
-    if (res.status == 200 || res.status == 201) {
-      responsibles.value = res.data
-    }
-  })
-}
 
 const users = ref([])
-const getUsers = () => {
+const getUsers = (values) => {
   axiosInstance('/user/improvement-plan/' + plmeId.value).then(res => {
     if (res.status == 200 || res.status == 201) {
       users.value = res.data
@@ -256,6 +232,21 @@ const getUsers = () => {
   })
 }
 
+const getExecutions = () => {
+  if (tareId.value == "")
+    return openNotification("warning", "Atención", "Debe seleccionar una tarea")
+
+  loaderTable.value = true
+  axiosInstance('/execution/task/' + tareId.value)
+      .then(res => {
+        if (res.status == 200 || res.status == 201) {
+          executions.value = res.data
+          loaderTable.value = false
+        }
+      }).catch(err => {
+    loaderTable.value = false
+  })
+}
 const refresh = (values) => {
   open.value = false
   emit('getList')

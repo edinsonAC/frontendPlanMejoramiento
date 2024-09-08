@@ -41,11 +41,17 @@
     </template>
     <template #bodyCell="{ record, text, column }">
       <template v-if="column.dataIndex.includes('plmeId')">
-        <router-link :to="`/plan-mejoramiento/${text}/accion-mejora`">
+        <router-link :to="`/plan-mejoramiento/${text}/factores`">
           <a-button v-if="text" type="primary"
-                    size="small"> Acciones de mejora
+                    size="small"> Ver Factores
           </a-button>
         </router-link>
+      </template>
+      <template v-else-if="column.dataIndex.includes('plmeAnioInicio')">
+        <span>{{text}}-{{record.plmeSemestreInicio}}</span>
+      </template>
+      <template v-else-if="column.dataIndex.includes('plmeAnioFin')">
+        <span>{{text}}-{{ record.plmeSemestreFin}}</span>
       </template>
       <template v-else>
         <span v-if="state.searchText && state.searchedColumn === column.dataIndex" @click="rowClick(record)">
@@ -70,8 +76,9 @@
       </template>
     </template>
   </a-table>
-  <a-modal v-model:open="open" title="Actualizar" :footer="null" :destroy-on-close="true" :width="700">
+  <a-modal v-model:open="open" title="Actualizar" :footer="null" :destroy-on-close="true" :width="900">
     <FormImprovementPlan :update="true" :item="improvementPlan" :programs="programs"
+                         :development-plans="developmentPlans"
                          @update-info="closeModal"></FormImprovementPlan>
   </a-modal>
 </template>
@@ -88,6 +95,7 @@ const emit = defineEmits(['getList'])
 const props = defineProps({
   programs: Array,
   data: Array,
+  developmentPlans: Array,
   loader: Boolean
 })
 const improvementPlan = reactive({
@@ -118,6 +126,34 @@ const columnsAdmin = [
     },
   },
   {
+    title: 'Inicio',
+    dataIndex: 'plmeAnioInicio',
+    key: 'plmeAnioInicio',
+    customFilterDropdown: true,
+    onFilter: (value, record) => record.plmeAnioInicio.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  {
+    title: 'Fin',
+    dataIndex: 'plmeAnioFin',
+    key: 'plmeAnioFin',
+    customFilterDropdown: true,
+    onFilter: (value, record) => record.plmeAnioFin.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  {
     title: 'Programa Académico',
     dataIndex: ['programaAcademico', 'pracNombre'],
     key: ['programaAcademico', 'pracNombre'],
@@ -132,10 +168,23 @@ const columnsAdmin = [
     },
   },
   {
+    title: 'PDI',
+    dataIndex: ['planDesarrolloInstitucional', 'pdiNombre'],
+    key: ['planDesarrolloInstitucional', 'pdiNombre'],
+    customFilterDropdown: true,
+    onFilter: (value, record) => record.planDesarrolloInstitucional.pracNombre.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  {
     title: '',
     dataIndex: 'plmeId',
     key: 'plmeId',
-    width: 300
   },
 ];
 const columns = [
@@ -145,6 +194,48 @@ const columns = [
     key: 'plmeNombre',
     customFilterDropdown: true,
     onFilter: (value, record) => record.plmeNombre.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  {
+    title: 'Fecha Inicio',
+    dataIndex: 'plmeFechaInicio',
+    key: 'plmeFechaInicio',
+    customFilterDropdown: true,
+    onFilter: (value, record) => record.plmeFechaInicio.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  {
+    title: 'Fecha Fin',
+    dataIndex: 'plmeFechaFin',
+    key: 'plmeFechaFin',
+    customFilterDropdown: true,
+    onFilter: (value, record) => record.plmeFechaFin.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  {
+    title: 'PDI',
+    dataIndex: ['planDesarrolloInstitucional', 'pdiNombre'],
+    key: ['planDesarrolloInstitucional', 'pdiNombre'],
+    customFilterDropdown: true,
+    onFilter: (value, record) => record.planDesarrolloInstitucional.pracNombre.toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => {
@@ -181,6 +272,9 @@ const rowClick = (values) => {
   improvementPlan.pracId = values.pracId
   improvementPlan.plmeNombre = values.plmeNombre
   improvementPlan.plmeId = values.plmeId
+  improvementPlan.plmeFechaInicio = values.plmeFechaInicio
+  improvementPlan.plmeFechaFin = values.plmeFechaFin
+  improvementPlan.pdiId = values.pdiId
   open.value = true
 }
 </script>

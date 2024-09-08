@@ -20,34 +20,21 @@
                 @finishFailed="onFinishFailed"
             >
               <a-row type="flex" justify="space-around">
-                <a-col :xs="20" :sm="20" :md="7" :lg="7" :xl="7">
+                <a-col :xs="20" :sm="20" :md="11" :lg="11" :xl="11">
                   <label>Factor</label>
                   <a-form-item
                       name="factId"
                       :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
                   >
-                    <a-select v-model:value="formState.factId" placeholder="Seleccionar Factor">
+                    <a-select v-model:value="formState.factId" placeholder="Seleccionar Factor" :disabled="true">
                       <a-select-option v-for="fact in factors" :key="fact.factId" :value="fact.factId">
                         {{ fact.factNombre }}
                       </a-select-option>
                     </a-select>
                   </a-form-item>
                 </a-col>
-                <a-col :xs="20" :sm="20" :md="7" :lg="7" :xl="7">
-                  <label>Proceso</label>
-                  <a-form-item
-                      name="procId"
-                      :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
-                  >
-                    <a-select v-model:value="formState.procId" placeholder="Seleccionar Proceso">
-                      <a-select-option v-for="proc in procesess" :key="proc.procId" :value="proc.procId">
-                        {{ proc.procNombre }}
-                      </a-select-option>
-                    </a-select>
-                  </a-form-item>
-                </a-col>
-                <a-col :xs="20" :sm="20" :md="7" :lg="7" :xl="7">
-                  <label>Tipo Situación</label>
+                <a-col :xs="20" :sm="20" :md="11" :lg="11" :xl="11">
+                  <label>Situación a intervenir</label>
                   <a-form-item
                       name="tisiId"
                       :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
@@ -117,6 +104,26 @@
                 </a-col>
               </a-row>
               <a-row type="flex" justify="space-around">
+                <a-col :xs="20" :sm="20" :md="23" :lg="23" :xl="23">
+                  <label>Peso de la Acción de mejora</label>
+                  <a-form-item name="acmePeso"
+                               :rules="[{ type: 'number', min: 1, max: 100, message:'La acción de mejora debe tener un peso' }]"
+                  >
+                    <a-slider
+                        v-model:value="formState.acmePeso"
+                        :marks="{
+          0: '0%',
+          20: '20%',
+          40: '40%',
+          60: '60%',
+          80: '80%',
+          100: '100%',
+        }"
+                    />
+                  </a-form-item>
+                </a-col>
+              </a-row>
+              <a-row type="flex" justify="space-around">
                 <a-button type="primary" html-type="submit"> {{ acmeId != 0 ? 'Guardar' : 'Registrar' }}</a-button>
               </a-row>
             </a-form>
@@ -126,10 +133,40 @@
           <a-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
             <a-row justify="space-around" type="flex" class="form-comp">
               <a-row v-if="improvementPlan" type="flex" justify="start" style="width: 100%">
-                <h2>Tareas</h2>
               </a-row>
               <a-col :xs="20" :sm="20" :md="24" :lg="24" :xl="24">
-                <ListTask :loader="loaderTable" :data="tasks"></ListTask>
+
+                <a-tabs v-model:activeKey="activeKey">
+                  <a-tab-pane key="1">
+                    <template #tab>
+                    <span>
+                      <FormOutlined/>
+                        Tareas
+                      </span>
+                    </template>
+                    <ListTask
+                        @get-list="getTasks"
+                        :loader="loaderTable" :data="tasks" :acmeId="acmeId"></ListTask>
+                  </a-tab-pane>
+                  <a-tab-pane key="2">
+                    <template #tab>
+                      <span>
+                        <RocketOutlined/>
+                        Ejecución
+                      </span>
+                    </template>
+                    <ListExecution :loader="loaderTable" :data="tasks" :acmeId="acmeId"></ListExecution>
+                  </a-tab-pane>
+                  <a-tab-pane key="3">
+                    <template #tab>
+                      <span>
+                        <StockOutlined/>
+                        Seguimiento
+                      </span>
+                    </template>
+                    <ListTask :loader="loaderTable" :data="tasks" :acmeId="acmeId"></ListTask>
+                  </a-tab-pane>
+                </a-tabs>
               </a-col>
             </a-row>
           </a-col>
@@ -148,15 +185,21 @@ import {useRoute} from "vue-router";
 import {openNotification} from "../../lib/util.js";
 import router from "../../router/index.js";
 import ListTask from "../../components/task/ListTask.vue";
+import {
+  RocketOutlined,
+  StockOutlined,
+  FormOutlined,
+} from '@ant-design/icons-vue';
+import ListExecution from "../../components/task/ListExecution.vue";
 
 const route = useRoute()
 const store = storeApp()
 
 onBeforeMount(() => {
   store.setLoader(true)
+  formState.factId = Number(factId.value)
   getFactors()
   getSituationType()
-  getProcesses()
   getImprovementPlan()
   getAxisStrategics()
 
@@ -165,6 +208,7 @@ onBeforeMount(() => {
     getTasks()
   }
 })
+const activeKey = ref('1');
 
 const plmeId = computed(() => {
   return route.params.plan
@@ -174,10 +218,12 @@ const acmeId = computed(() => {
   return route.params.accion
 })
 
+const factId = computed(() => {
+  return route.params.factor
+})
 
 const formState = reactive({
   factId: null,
-  procId: null,
   tisiId: null,
   ejesId: null,
   liesId: null,
@@ -202,16 +248,6 @@ const getFactors = () => {
   })
 }
 
-const procesess = ref([])
-const getProcesses = () => {
-  axiosInstance.get('/process').then(res => {
-    if (res.status == 200) {
-      procesess.value = res.data
-    }
-  })
-}
-
-
 const improvementPlan = ref(null)
 const getImprovementPlan = () => {
   axiosInstance.get('/improvement-plan/' + plmeId.value).then(res => {
@@ -227,7 +263,6 @@ const getImprovementAction = () => {
     if (res.status == 200) {
       improvementAction.value = res.data
       formState.tisiId = res.data.tisiId
-      formState.procId = res.data.procId
       formState.factId = res.data.factId
       formState.liesId = res.data.programaInversion.liesId
       formState.ejesId = res.data.programaInversion.lineaEstrategica.ejesId
@@ -235,13 +270,14 @@ const getImprovementAction = () => {
       getInvestmentProgramByLiesId(formState.liesId)
       formState.prinId = res.data.prinId
       formState.acmeDescripcion = res.data.acmeDescripcion
+      formState.acmePeso = res.data.acmePeso
     }
   })
 }
 
 const axisEstrategics = ref([])
 const getAxisStrategics = () => {
-  axiosInstance.get('/strategic-axis').then(res => {
+  axiosInstance.get('/strategic-axis/improvement-plan/' + plmeId.value).then(res => {
     if (res.status == 200) {
       axisEstrategics.value = res.data
     }

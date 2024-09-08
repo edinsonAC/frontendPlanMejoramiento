@@ -4,22 +4,22 @@
       <template #renderItem="{ item }">
         <a-list-item>
           <a-descriptions title="" bordered style="margin-bottom: 1%">
-            <a-descriptions-item label="Factor">{{ item.factor.factNombre }}</a-descriptions-item>
-            <a-descriptions-item label="Proceso">{{ item.proceso.procNombre }}</a-descriptions-item>
-            <a-descriptions-item label="Tipo Situación">{{ item.tipoSituacion.tisiNombre }}</a-descriptions-item>
-            <a-descriptions-item label="Programa Inversión">{{
+            <a-descriptions-item label="Factor" :span="5">{{ item.factor.factNombre }}</a-descriptions-item>
+            <a-descriptions-item label="Programa Inversión" :span="5">{{
                 item.programaInversion.prinNombre
               }}
             </a-descriptions-item>
-            <a-descriptions-item label="Estado" :span="1">
-              <a-badge status="processing" text="Activo"/>
+            <a-descriptions-item label="Situación Intervenir">{{ item.tipoSituacion.tisiNombre }}</a-descriptions-item>
+            <a-descriptions-item label="Peso">
+              <a-badge status="processing" :text="item.acmePeso + '%'"/>
             </a-descriptions-item>
-            <a-descriptions-item label="Acciones" :span="1">
+            <a-descriptions-item label="Acciones">
               <a-button type="primary" size="small"
-                        @click="router.push(`/plan-mejoramiento/${plmeId}/accion-mejora/${item.acmeId}`)">Editar
+                        @click="router.push(`/plan-mejoramiento/${plmeId}/factor/${item.factId}/accion-mejora/${item.acmeId}`)">
+                Editar
               </a-button>
             </a-descriptions-item>
-            <a-descriptions-item label="Descripción">
+            <a-descriptions-item label="Descripción" :span="11">
               {{ item.acmeDescripcion }}
             </a-descriptions-item>
           </a-descriptions>
@@ -34,6 +34,7 @@ import {reactive, ref, defineProps, computed} from 'vue';
 import {storeApp} from "../../stores/store.js";
 import router from "../../router/index.js";
 import {useRoute} from "vue-router";
+
 
 const route = useRoute()
 

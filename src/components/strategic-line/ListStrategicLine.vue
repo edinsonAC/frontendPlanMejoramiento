@@ -62,7 +62,8 @@
     </template>
   </a-table>
   <a-modal v-model:open="open" title="Actualizar" :footer="null" :destroy-on-close="true" :width="900">
-    <FormStrategicLine :update="true" :item="strategicLine" :development-plans="developmentPlans" @update-info="closeModal"></FormStrategicLine>
+    <FormStrategicLine :update="true" :item="strategicLine" :development-plans="developmentPlans"
+                       @update-info="closeModal"></FormStrategicLine>
   </a-modal>
 </template>
 <script setup>
@@ -93,7 +94,7 @@ const state = reactive({
 const searchInput = ref();
 const columns = [
   {
-    title: 'Nombre',
+    title: 'Línea Estratégica',
     dataIndex: 'liesNombre',
     key: 'liesNombre',
     customFilterDropdown: true,
@@ -109,7 +110,7 @@ const columns = [
   {
     title: 'Eje Estratégico',
     dataIndex: ['ejeEstrategico', 'ejesNombre'],
-    key: ['ejeEstrategico', 'ejesNombre'],
+    key: 'ejeEstrategico',
     customFilterDropdown: true,
     onFilter: (value, record) => record.ejeEstrategico.ejesNombre.toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownOpenChange: visible => {
@@ -123,9 +124,13 @@ const columns = [
   {
     title: 'Plan de Desarrollo Institucional (PDI)',
     dataIndex: ['ejeEstrategico', 'planDesarrolloInstitucional', 'pdiNombre'],
-    key: ['ejeEstrategico', 'planDesarrolloInstitucional', 'pdiNombre'],
+    key: 'ejeEstrategico.planDesarrolloInstitucional',
     customFilterDropdown: true,
-    onFilter: (value, record) => record.ejeEstrategico.planDesarrolloInstitucional.pdiNombre.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilter: (value, record) => {
+      console.log("value ? ", value)
+      let val = record.ejeEstrategico
+      return val.planDesarrolloInstitucional.pdiNombre.toString().toLowerCase().includes(value.toLowerCase())
+    },
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => {

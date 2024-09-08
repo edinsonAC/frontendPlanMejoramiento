@@ -9,13 +9,24 @@
           @finishFailed="onFinishFailed"
       >
         <a-form-item
+            label="Plan de Desarrollo Institucional"
+            name="pdiId"
+            :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
+        >
+          <a-select v-model:value="formState.pdiId" placeholder="Seleccione PDI" @change="onchangeList">
+            <a-select-option v-for="dev in developmentPlansFiltered" :key="dev.pdiId" :value="dev.pdiId">
+              {{ dev.pdiNombre }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item
             label="Eje Estratégico"
             name="ejesId"
             :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
         >
           <a-select v-model:value="formState.ejesId" placeholder="Seleccione eje estratégico"
                     @change="listStrategicLineByEjesId">
-            <a-select-option v-for="eje in ejes" :key="eje.ejesId" :value="eje.ejesId">
+            <a-select-option v-for="eje in strategicAxis" :key="eje.ejesId" :value="eje.ejesId">
               {{ eje.ejesNombre }}
             </a-select-option>
           </a-select>
@@ -36,7 +47,7 @@
             name="prinNombre"
             :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
         >
-          <a-input v-model:value="formState.prinNombre" placeholder="Nombre programa inversión"/>
+          <a-input v-model:value="formState.prinNombre" :maxlength="200" placeholder="Nombre programa inversión"/>
         </a-form-item>
         <a-row type="flex" justify="space-around">
           <a-button type="primary" html-type="submit">{{ update ? 'Guardar' : 'Registrar' }}</a-button>
@@ -46,7 +57,7 @@
   </a-row>
 </template>
 <script setup>
-import {onBeforeMount, reactive, ref} from "vue";
+import {computed, onBeforeMount, reactive, ref} from "vue";
 import axiosInstance from "../../plugins/axios.js";
 import {storeApp} from "../../stores/store.js";
 import {openNotification} from "../../lib/util.js";
@@ -55,7 +66,7 @@ const store = storeApp()
 const emit = defineEmits(['saveInfo', 'updateInfo'])
 
 const props = defineProps({
-  ejes: Array,
+  developmentPlans: Array,
   update: Boolean,
   item: Object
 })
@@ -63,11 +74,23 @@ const props = defineProps({
 onBeforeMount(() => {
   if (props.update) {
     formState.prinNombre = props.item['prinNombre']
+    formState.pdiId = props.item['pdiId']
+    getStrategicAxis(formState.pdiId)
     formState.ejesId = props.item['ejesId']
     listStrategicLineByEjesId(formState.ejesId)
     formState.liesId = props.item['liesId']
   }
 })
+
+const developmentPlansFiltered = computed(() => {
+  return props.developmentPlans.filter((item) => {
+    if (!props.update)
+      return item.pdiState
+    else
+      return item
+  })
+})
+
 const strategicLines = ref([]);
 const formState = reactive({
   prinNombre: null,
@@ -91,6 +114,7 @@ const registerInvestmentProgram = (values) => {
       formState.prinNombre = null
       formState.liesId = null
       formState.ejesId = null
+      formState.pdiId = null
       emit('saveInfo')
       store.setLoader(false)
     }
@@ -105,6 +129,7 @@ const updateInvestmentProgram = (values) => {
       formState.prinNombre = null
       formState.liesId = null
       formState.ejesId = null
+      formState.pdiId = null
       emit('updateInfo')
       store.setLoader(false)
     }
@@ -122,6 +147,20 @@ const listStrategicLineByEjesId = (values) => {
   })
 }
 
+
+const onchangeList = (id) => {
+  formState.ejesId = null
+  getStrategicAxis(id)
+}
+const strategicAxis = ref([])
+
+const getStrategicAxis = (id) => {
+  axiosInstance.get('/strategic-axis/development-plan/' + id).then(res => {
+    if (res.status == 200) {
+      strategicAxis.value = res.data
+    }
+  })
+}
 
 const onFinishFailed = values => {
 

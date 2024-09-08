@@ -56,6 +56,11 @@
           <template v-else>{{ fragment }}</template>
         </template>
       </span>
+      <div v-else-if="column.dataIndex.includes('pdiState')">
+        <a-button v-if="text" type="primary" size="small" @click="showConfirm(record.pdiId,text)">Activo</a-button>
+        <a-button v-else size="small" @click="showConfirm(record.pdiId,text)">Inactivo</a-button>
+      </div>
+
       <span v-else @click="rowClick(record)" class="pointer">
         {{ text }}
       </span>
@@ -67,10 +72,16 @@
 </template>
 <script setup>
 import {reactive, ref} from 'vue';
+import {ExclamationCircleOutlined} from '@ant-design/icons-vue';
 import {SearchOutlined} from '@ant-design/icons-vue';
 import FormDevelopmentPlan from "./FormDevelopmentPlan.vue";
+import {Modal} from 'ant-design-vue';
+import {createVNode} from 'vue';
+import axiosInstance from "../../plugins/axios.js";
+import {storeApp} from "../../stores/store.js";
 
 const emit = defineEmits(['getList'])
+const store = storeApp()
 
 const props = defineProps({
   data: Array,
@@ -91,7 +102,7 @@ const state = reactive({
 const searchInput = ref();
 const columns = [
   {
-    title: 'Nombre',
+    title: 'Nombre PDI',
     dataIndex: 'pdiNombre',
     key: 'pdiNombre',
     customFilterDropdown: true,
@@ -119,7 +130,7 @@ const columns = [
     },
   },
   {
-    title: 'Descriccpión',
+    title: 'Descripción',
     dataIndex: 'pdiDescripcion',
     key: 'pdiDescripcion',
     customFilterDropdown: true,
@@ -131,6 +142,23 @@ const columns = [
         }, 100);
       }
     },
+  },
+  {
+    title: 'Estado',
+    dataIndex: 'pdiState',
+    key: 'pdiState',
+    filterMultiple: false,
+    filters: [
+      {
+        text: 'Activo',
+        value: true,
+      },
+      {
+        text: 'Inactivo',
+        value: false,
+      },
+    ],
+    onFilter: (value, record) => record.pdiState === value,
   },
 ];
 const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -156,6 +184,41 @@ const rowClick = (values) => {
   developmentPlan.pdiDescripcion = values.pdiDescripcion
   developmentPlan.pdiPeriodo = values.pdiPeriodo
   open.value = true
+}
+
+
+const showConfirm = (id, state) => {
+  Modal.confirm({
+    title: 'Deseas cambiar de estado?',
+    icon: createVNode(ExclamationCircleOutlined),
+    content: createVNode(
+        'div',
+        {
+          style: 'color:red;',
+        },
+        state ? 'Si se inactiva el PDI no se podra usar en las demas vistas' : 'Si se activa el PDI podrás usarlo en las demas vistas de la plataforma',
+    ),
+    onOk() {
+      let body = {
+        pdiState: !state
+      }
+      updateStateDevelopmentPlan(id, body)
+    },
+    onCancel() {
+      console.log('Cancel');
+    },
+    class: 'test',
+  });
+};
+
+const updateStateDevelopmentPlan = (id, values) => {
+  store.setLoader(true)
+  axiosInstance.put(`/development-plan/update-state/${id}`, values).then(res => {
+    if (res.status == 200 || res.status == 201) {
+      emit('getList')
+      store.setLoader(false)
+    }
+  })
 }
 </script>
 <style scoped>

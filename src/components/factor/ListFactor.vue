@@ -1,5 +1,67 @@
 <template>
-  <a-table :data-source="data" :columns="columns" size="small"
+  <a-table v-if="plan" :data-source="data" :columns="columnsPlan" size="small"
+           :scroll="{ y: 600 }"
+           :pagination="{ showSizeChanger: true }"
+           :loading="loader">
+    <template #headerCell="{ column }">
+      <template v-if="column.key === 'name'">
+        <span style="color: #1890ff">Name</span>
+      </template>
+    </template>
+    <template
+        #customFilterDropdown="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+    >
+      <div style="padding: 8px">
+        <a-input
+            ref="searchInput"
+            :placeholder="`Buscar ${column.title}`"
+            :value="selectedKeys[0]"
+            style="width: 188px; margin-bottom: 8px; display: block"
+            @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+            @pressEnter="handleSearch(selectedKeys, confirm, column.dataIndex)"
+        />
+        <a-button
+            type="primary"
+            size="small"
+            style="width: 90px; margin-right: 8px"
+            @click="handleSearch(selectedKeys, confirm, column.dataIndex)"
+        >
+          <template #icon>
+            <SearchOutlined/>
+          </template>
+          Buscar
+        </a-button>
+        <a-button size="small" style="width: 90px" @click="handleReset(clearFilters)">
+          Limpiar
+        </a-button>
+      </div>
+    </template>
+    <template #customFilterIcon="{ filtered }">
+      <search-outlined :style="{ color: filtered ? '#108ee9' : undefined }"/>
+    </template>
+    <template #bodyCell="{ record, text, column }">
+      <span v-if="state.searchText && state.searchedColumn === column.dataIndex" @click="goActionImprovement(record)">
+        <template
+            v-for="(fragment, i) in text
+            .toString()
+            .split(new RegExp(`(?<=${state.searchText})|(?=${state.searchText})`, 'i'))"
+        >
+          <mark
+              v-if="fragment.toLowerCase() === state.searchText.toLowerCase()"
+              :key="i"
+              class="highlight"
+          >
+            {{ fragment }}
+          </mark>
+          <template v-else>{{ fragment }}</template>
+        </template>
+      </span>
+      <span v-else @click="goActionImprovement(record)" class="pointer">
+        {{ text }}
+      </span>
+    </template>
+  </a-table>
+  <a-table v-else :data-source="data" :columns="columns" size="small"
            :scroll="{ y: 200 }"
            :pagination="{ showSizeChanger: true }"
            :loading="loader">
@@ -67,9 +129,11 @@
   </a-modal>
 </template>
 <script setup>
-import {reactive, ref} from 'vue';
+import {computed, reactive, ref} from 'vue';
 import {SearchOutlined} from '@ant-design/icons-vue';
 import FormFactor from "./FormFactor.vue";
+import router from "../../router/index.js";
+import {useRoute} from "vue-router";
 
 const emit = defineEmits(['getList'])
 
@@ -77,7 +141,8 @@ const props = defineProps({
   factorTypes: Array,
   agrements: Array,
   data: Array,
-  loader: Boolean
+  loader: Boolean,
+  plan: Boolean,
 })
 const factor = reactive({
   pracId: '',
@@ -93,9 +158,25 @@ const state = reactive({
   searchedColumn: '',
 });
 const searchInput = ref();
+const columnsPlan = [
+  {
+    title: 'Nombre Factor',
+    dataIndex: 'factNombre',
+    key: 'factNombre',
+    customFilterDropdown: true,
+    onFilter: (value, record) => record.factNombre.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+];
 const columns = [
   {
-    title: 'Nombre',
+    title: 'Nombre Factor',
     dataIndex: 'factNombre',
     key: 'factNombre',
     customFilterDropdown: true,
@@ -111,15 +192,20 @@ const columns = [
   {
     title: 'Tipo Factor',
     dataIndex: ['tipoFactor', 'tifaNombre'],
-    key: ['tipoFactor', 'tifaNombre'],
-    customFilterDropdown: true,
-    onFilter: (value, record) => record.tipoFactor.tifaNombre.toString().toLowerCase().includes(value.toLowerCase()),
-    onFilterDropdownOpenChange: visible => {
-      if (visible) {
-        setTimeout(() => {
-          searchInput.value.focus();
-        }, 100);
-      }
+    key: 'tipoFactor',
+    filterMultiple: false,
+    filters: [
+      {
+        text: 'Institucional',
+        value: 1,
+      },
+      {
+        text: 'Académico',
+        value: 2,
+      },
+    ],
+    onFilter: (value, record) => {
+      return record.tipoFactor && record.tipoFactor.tifaId === value;
     },
   },
   {
@@ -161,6 +247,15 @@ const rowClick = (values) => {
   factor.factDescripcion = values.factDescripcion
   factor.factId = values.factId
   open.value = true
+}
+
+const route = useRoute()
+const plmeId = computed(() => {
+  return route.params.plan
+})
+const goActionImprovement = (values) => {
+  const factor = values.factId
+  router.push(`/plan-mejoramiento/${plmeId.value}/factor/${factor}/acciones-mejoras`)
 }
 </script>
 <style scoped>

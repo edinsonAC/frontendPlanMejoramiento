@@ -9,31 +9,33 @@
           @finishFailed="onFinishFailed"
       >
         <a-row justify="space-around" type="flex">
-          <a-col :xs="20" :sm="20" :md="23" :lg="23" :xl="23">
-            <label>Nombre</label>
+          <a-col :xs="20" :sm="20" :md="11" :lg="11" :xl="11">
+            <label>Año</label>
             <a-form-item
-                name="tareNombre"
+                name="ejecAnio"
                 :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
             >
-              <a-input v-model:value="formState.tareNombre" placeholder="Nombre de la tarea"/>
+              <a-input v-model:value="formState.ejecAnio" placeholder="Descripción de la ejecución"/>
             </a-form-item>
           </a-col>
-        </a-row>
-        <a-row justify="space-around" type="flex">
           <a-col :xs="20" :sm="20" :md="11" :lg="11" :xl="11">
-            <label>Rol</label>
+            <label>Semestre</label>
             <a-form-item
-                name="respId"
+                name="ejecSemestre"
                 :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
             >
-              <a-select v-model:value="formState.respId" placeholder="Rol">
-                <a-select-option v-for="responsable in responsibles" :key="responsable.respId"
-                                 :value="responsable.respId">
-                  {{ responsable.respNombre }}
+              <a-select v-model:value="formState.ejecSemestre" placeholder="Rol">
+                <a-select-option :key="1" :value="1">
+                  1
+                </a-select-option>
+                <a-select-option :key="2" :value="2">
+                  2
                 </a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
+        </a-row>
+        <a-row justify="space-around" type="flex">
           <a-col :xs="20" :sm="20" :md="11" :lg="11" :xl="11">
             <label>Asignar a</label>
             <a-form-item
@@ -47,33 +49,13 @@
               </a-select>
             </a-form-item>
           </a-col>
-        </a-row>
-        <a-row justify="space-around" type="flex">
           <a-col :xs="20" :sm="20" :md="11" :lg="11" :xl="11">
             <label>Inicio / Fin</label>
-            <a-form-item name="rangeDuration"
-                         :rules=" [{type: 'array',required: true,message: 'Este campo es obligatorio',}]">
-              <a-range-picker
-                  v-model:value="formState.rangeDuration"
+            <a-form-item name="ejecFechaEjecucion"
+                         :rules=" [{required: true,message: 'Este campo es obligatorio',}]">
+              <a-date-picker
+                  v-model:value="formState.ejecFechaEjecucion"
                   value-format="YYYY-MM-DD"/>
-            </a-form-item>
-          </a-col>
-          <a-col :xs="20" :sm="20" :md="5" :lg="5" :xl="5">
-            <label>Línea base</label>
-            <a-form-item
-                name="tareLineaBase"
-                :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
-            >
-              <a-input v-model:value="formState.tareLineaBase" placeholder="Línea base de la tarea."/>
-            </a-form-item>
-          </a-col>
-          <a-col :xs="20" :sm="20" :md="5" :lg="5" :xl="5">
-            <label>Meta</label>
-            <a-form-item
-                name="tareMeta"
-                :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
-            >
-              <a-input v-model:value="formState.tareMeta" placeholder="Meta de la tarea."/>
             </a-form-item>
           </a-col>
         </a-row>
@@ -81,51 +63,13 @@
           <a-col :xs="20" :sm="20" :md="23" :lg="23" :xl="23">
             <label>Descripción</label>
             <a-form-item
-                name="tareDescripcion"
+                name="ejecDescripcion"
                 :rules="[{ required: true, message: 'Este campo es obligatorio' }]"
             >
-              <a-textarea v-model:value="formState.tareDescripcion" placeholder="Descripción de la tarea"/>
-            </a-form-item>
-          </a-col>
-          <a-col :xs="20" :sm="20" :md="23" :lg="23" :xl="23">
-            <label>Peso de la tarea</label>
-            <a-form-item name="tarePeso">
-              <a-slider
-                  v-model:value="formState.tarePeso"
-                  :marks="{
-          0: '0%',
-          20: '20%',
-          40: '40%',
-          60: '60%',
-          80: '80%',
-          100: '100%',
-        }"
-              />
+              <a-textarea v-model:value="formState.ejecDescripcion" placeholder="Descripción de la ejecución"/>
             </a-form-item>
           </a-col>
         </a-row>
-        <a-row type="flex" justify="space-around">
-          <a-col :xs="20" :sm="20" :md="11" :lg="11" :xl="11">
-            <label>Documento Soporte</label>
-            <a-form-item name="upload" extra="">
-              <a-upload
-                  v-model:fileList="formState.upload"
-                  name="logo"
-                  action="/upload.do"
-                  list-type="picture"
-              >
-                <a-button>
-                  <template #icon>
-                    <UploadOutlined/>
-                  </template>
-                  Click para cargar archivo
-                </a-button>
-              </a-upload>
-            </a-form-item>
-          </a-col>
-
-        </a-row>
-
         <a-row type="flex" justify="space-around">
           <a-button type="primary" html-type="submit"> {{ update ? 'Guardar' : 'Registrar' }}</a-button>
         </a-row>
@@ -148,8 +92,7 @@ const props = defineProps({
   update: Boolean,
   item: Object,
   users: Array,
-  responsibles: Array,
-  acmeId: Number
+  tareId: Number
 })
 
 onBeforeMount(() => {
@@ -174,20 +117,13 @@ onBeforeMount(() => {
 })
 
 const formState = reactive({
-  tareNombre: '',
-  tareDescripcion: '',
-  tarePeso: 0,
-  tareMeta: '',
-  tareLineaBase: '',
-  tareDocumentoLineaBase: '',
-  acmeId: '',
-  tareFechaInicio: '',
-  tareFechaFin: '',
-  rangeDuration: null,
+  ejecDescricion: '',
+  ejecAvance: '',
+  tareId: '',
+  ejecFechaEjecucion: '',
   usuaId: '',
-  respId: '',
-  tareRecursos: '',
-  tareOrden: 0
+  ejecSemestre: '',
+  ejecAnio: ''
 });
 
 const onFinish = values => {

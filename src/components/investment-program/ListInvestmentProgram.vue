@@ -62,7 +62,7 @@
     </template>
   </a-table>
   <a-modal v-model:open="open" title="Actualizar" :footer="null" :destroy-on-close="true" :width="900">
-    <FormInvestmentProgram :update="true" :item="investmentProgram" :ejes="ejes"
+    <FormInvestmentProgram :update="true" :item="investmentProgram" :development-plans="developmentPlans"
                            @update-info="closeModal"></FormInvestmentProgram>
   </a-modal>
 </template>
@@ -75,7 +75,7 @@ import FormInvestmentProgram from "./FormInvestmentProgram.vue";
 const emit = defineEmits(['getList'])
 
 const props = defineProps({
-  ejes: Array,
+  developmentPlans: Array,
   data: Array,
   loader: Boolean
 })
@@ -93,7 +93,7 @@ const state = reactive({
 const searchInput = ref();
 const columns = [
   {
-    title: 'Nombre',
+    title: 'Programa Inversión',
     dataIndex: 'prinNombre',
     key: 'prinNombre',
     customFilterDropdown: true,
@@ -157,6 +157,7 @@ const rowClick = (values) => {
   investmentProgram.liesId = values.liesId
   investmentProgram.prinNombre = values.prinNombre
   investmentProgram.ejesId = values.lineaEstrategica.ejesId
+  investmentProgram.pdiId = values.lineaEstrategica.ejeEstrategico.pdiId
   open.value = true
 }
 </script>

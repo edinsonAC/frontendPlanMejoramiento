@@ -42,7 +42,7 @@ axiosInstance.interceptors.response.use(
                 router.push('/login')
                 break
             case 403:
-                openNotification("error", "Información", "Se ha expirado la sesion.");
+                openNotification("error", "Información", "Se ha expirado la sesión.");
                 store.logout();
                 router.push('/login')
                 break

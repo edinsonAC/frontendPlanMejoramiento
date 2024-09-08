@@ -77,21 +77,28 @@ const router = createRouter({
             path: "/plan-mejoramiento",
             name: "plan-mejoramiento",
             meta: {requiresAuth: true},
-            component: () => import("../views/program-director/ImprovementPlanView.vue"),
+            component: () => import("../views/program-director/improvement-plan/ImprovementPlanView.vue"),
             beforeEnter: (to, from, next) => before(to, from, next)
         },
         {
-            path: "/plan-mejoramiento/:plan/accion-mejora",
+            path: "/plan-mejoramiento/:plan/factor/:factor/acciones-mejoras",
             name: "plan-mejoramiento-accion-mejora",
             meta: {requiresAuth: true},
             component: () => import("../views/program-director/ImprovementActionView.vue"),
             beforeEnter: (to, from, next) => before(to, from, next)
         },
         {
-            path: "/plan-mejoramiento/:plan/accion-mejora/:accion",
+            path: "/plan-mejoramiento/:plan/factor/:factor/accion-mejora/:accion",
             name: "plan-mejoramiento-accion-mejora-id",
             meta: {requiresAuth: true},
             component: () => import("../views/program-director/FormImprovementAction.vue"),
+            beforeEnter: (to, from, next) => before(to, from, next)
+        },
+        {
+            path: "/plan-mejoramiento/:plan/factores",
+            name: "plan-mejoramiento-factores",
+            meta: {requiresAuth: true},
+            component: () => import("../views/program-director/improvement-plan/FactorImprovementPlan.vue"),
             beforeEnter: (to, from, next) => before(to, from, next)
         },
         {

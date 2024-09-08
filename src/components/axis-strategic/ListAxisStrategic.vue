@@ -93,7 +93,7 @@ const state = reactive({
 const searchInput = ref();
 const columns = [
   {
-    title: 'Nombre',
+    title: 'Nombre Eje Estratégico',
     dataIndex: 'ejesNombre',
     key: 'ejesNombre',
     customFilterDropdown: true,

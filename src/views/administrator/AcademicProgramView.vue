@@ -3,10 +3,10 @@
     <a-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
       <a-card class="card-chart">
         <a-row type="flex" justify="start">
-          <BreadCrumbComponent :paths="['Información Predeterminada','Programa Academico']"></BreadCrumbComponent>
+          <BreadCrumbComponent :paths="['Información Predeterminada','Programa Académico']"></BreadCrumbComponent>
         </a-row>
         <a-row style="margin-top: 1%" type="flex" justify="space-around">
-          <a-col :xs="24" :sm="24" :md="11" :lg="11" :xl="11">
+          <a-col :xs="24" :sm="24" :md="15" :lg="15" :xl="15">
             <FormAcademicProgram :update="false" @saveInfo="getAcademicPrograms" :item="null"></FormAcademicProgram>
           </a-col>
         </a-row>

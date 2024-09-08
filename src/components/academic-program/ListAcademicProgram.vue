@@ -91,7 +91,7 @@ const state = reactive({
 const searchInput = ref();
 const columns = [
   {
-    title: 'Nombre',
+    title: 'Nombre Programa Académico',
     dataIndex: 'pracNombre',
     key: 'pracNombre',
     customFilterDropdown: true,
